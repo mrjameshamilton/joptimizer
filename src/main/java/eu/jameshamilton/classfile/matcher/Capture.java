@@ -1,6 +1,5 @@
-package eu.jameshamilton;
+package eu.jameshamilton.classfile.matcher;
 
-@SuppressWarnings("preview")
 public class Capture<T> implements Matcher<T> {
     private T value;
 

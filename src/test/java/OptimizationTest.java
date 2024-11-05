@@ -1,123 +1,102 @@
+import eu.jameshamilton.optimizer.ClassOptimizer;
+import eu.jameshamilton.optimizer.Optimization;
+import eu.jameshamilton.optimizer.OptimizationStats;
+import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
+import eu.jameshamilton.optimizer.deadcode.NopRemover;
+import eu.jameshamilton.optimizer.string.ConstantToStringOptimization;
+import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import org.junit.jupiter.api.Test;
-import java.lang.classfile.*;
-import java.util.List;
-import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassHierarchyResolver;
+import java.lang.classfile.ClassModel;
+import java.lang.constant.ClassDesc;
+import java.lang.constant.MethodTypeDesc;
+import java.util.Map;
+
+import static eu.jameshamilton.test.BytecodeAssertions.given;
+import static java.lang.classfile.ClassFile.DeadCodeOption.KEEP_DEAD_CODE;
+import static java.lang.constant.ClassDesc.*;
+import static java.lang.constant.MethodTypeDesc.ofDescriptor;
+
+@SuppressWarnings("preview")
 class OptimizationTest {
-    
+    private final OptimizationStats stats = new OptimizationStats();
+    private final ClassHierarchyResolver resolver = ClassHierarchyResolver.defaultResolver();
+
     @Test
-    void shouldRemoveAllNops() {
-        // Create a list of instructions that mimics what we're seeing
-        List<CodeElement> elements = List.of(
-            new Label(0), // Some label
-            Instruction.NOP,  // First NOP
-            new LoadInstruction(Opcode.ALOAD_0, 0),  // Load
-            Instruction.NOP,  // Another NOP
-            new StoreInstruction(Opcode.ASTORE, 3),  // Store
-            new Label(1),  // Another label
-            Instruction.NOP   // Third NOP
+    public void testNopRemoval() {
+        given(resolver, code -> code
+            .nop()
+            .nop()
+            .return_()
+        )
+        .when(classModel -> optimize(classModel, new NopRemover()))
+        .expect(code -> code
+            .return_()
         );
-        
-        // Create code attribute mock
-        CodeAttribute code = new CodeAttribute() {
-            @Override
-            public Stream<CodeElement> elementStream() {
-                return elements.stream();
-            }
-            
-            // Implement other required methods...
-            @Override
-            public List<CodeElement> elementList() {
-                return elements;
-            }
-        };
-        
-        // Create builder to capture output
-        List<CodeElement> output = new ArrayList<>();
-        CodeBuilder builder = new CodeBuilder() {
-            @Override
-            public void with(CodeElement element) {
-                output.add(element);
-            }
-            // Implement other required methods...
-        };
-        
-        // Apply optimization
-        optimize(null, code, builder);
-        
-        // Verify no NOPs in output
-        assertFalse(output.stream()
-            .anyMatch(e -> e instanceof Instruction i && i.opcode() == Opcode.NOP),
-            "Output should not contain any NOPs");
-            
-        // Verify other instructions preserved
-        assertTrue(output.stream()
-            .anyMatch(e -> e instanceof LoadInstruction),
-            "Output should contain LOAD instruction");
-        assertTrue(output.stream()
-            .anyMatch(e -> e instanceof StoreInstruction),
-            "Output should contain STORE instruction");
-        assertEquals(2, output.stream()
-            .filter(e -> e instanceof Label)
-            .count(),
-            "Output should contain both labels");
     }
-    
+
     @Test
-    void shouldRemoveConsecutiveNops() {
-        List<CodeElement> elements = List.of(
-            new Label(0),
-            Instruction.NOP,
-            Instruction.NOP,  // Consecutive NOPs
-            new StoreInstruction(Opcode.ASTORE, 3),
-            new Label(1)
+    public void testStringToString() {
+        given(resolver, code -> code
+            .constantInstruction("string")
+            .invokevirtual(of("java.lang.String"), "toString", ofDescriptor("()Ljava/lang/String;"))
+            .return_()
+        )
+        .when(classModel -> optimize(classModel, new ConstantToStringOptimization()))
+        .expect(code -> code
+            .constantInstruction("string")
+            .return_()
         );
-        
-        // Similar test setup as above...
-        
-        assertFalse(output.stream()
-            .anyMatch(e -> e instanceof Instruction i && i.opcode() == Opcode.NOP),
-            "Output should not contain any NOPs");
     }
-    
+
     @Test
-    void shouldHandleNopsAroundLabels() {
-        List<CodeElement> elements = List.of(
-            Instruction.NOP,
-            new Label(0),  // NOP before label
-            new StoreInstruction(Opcode.ASTORE, 3),
-            new Label(1),
-            Instruction.NOP  // NOP after label
+    public void testStringBuilderConstructorAppend() {
+        var constants = Map.of(
+            "Hello World", "Ljava/lang/String;",
+            42, "I",
+            42L, "J",
+            42.0, "D",
+            42.0f, "F"
         );
-        
-        // Similar test setup as above...
-        
-        assertFalse(output.stream()
-            .anyMatch(e -> e instanceof Instruction i && i.opcode() == Opcode.NOP),
-            "Output should not contain any NOPs");
+
+        ClassDesc stringBuilder = of("java.lang.StringBuilder");
+        constants.forEach((key, value) -> {
+            given(resolver, code -> code
+                .newObjectInstruction(stringBuilder)
+                .dup()
+                .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("()V"))
+                .constantInstruction(key)
+                .invokevirtual(stringBuilder, "append", MethodTypeDesc.ofDescriptor("(" + value + ")Ljava/lang/StringBuilder;")))
+                .when(classModel -> optimize(classModel, new StringBuilderConstructorAppend()))
+                .expect(code -> code
+                    .newObjectInstruction(stringBuilder)
+                    .dup()
+                    .constantInstruction(key)
+                    .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("(" + value + ")V")));
+        });
     }
-    
+
     @Test
-    void shouldPreserveInstructionOrder() {
-        LoadInstruction load = new LoadInstruction(Opcode.ALOAD_0, 0);
-        StoreInstruction store = new StoreInstruction(Opcode.ASTORE, 3);
-        Label label1 = new Label(0);
-        Label label2 = new Label(1);
-        
-        List<CodeElement> elements = List.of(
-            label1,
-            Instruction.NOP,
-            load,
-            Instruction.NOP,
-            store,
-            label2
-        );
-        
-        // Similar test setup as above...
-        
-        // Verify order preserved (excluding NOPs)
-        List<CodeElement> expectedOrder = List.of(label1, load, store, label2);
-        assertEquals(expectedOrder, output,
-            "Instructions should maintain their relative order after NOP removal");
+    public void multipleByOne() {
+        given(resolver, code -> {
+            code
+                .constantInstruction(5)
+                .istore(0)
+                .iload(0)
+                .constantInstruction(1)
+                .imul();
+        })
+            .when(classModel -> optimize(classModel, new MultiplyByOne()))
+            .expect(code -> code
+                .constantInstruction(5)
+                .istore(0)
+                .iload(0));
+    }
+
+    private ClassModel optimize(ClassModel classModel, Optimization...optimizations) {
+        byte[] bytes = new ClassOptimizer(stats, resolver, classModel).optimize(optimizations);
+        return ClassFile.of(KEEP_DEAD_CODE).parse(bytes);
     }
 }

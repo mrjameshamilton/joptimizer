@@ -69,12 +69,12 @@ class OptimizationTest {
                 .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("()V"))
                 .constantInstruction(key)
                 .invokevirtual(stringBuilder, "append", MethodTypeDesc.ofDescriptor("(" + value + ")Ljava/lang/StringBuilder;")))
-                .when(classModel -> optimize(classModel, new StringBuilderConstructorAppend()))
-                .expect(code -> code
-                    .newObjectInstruction(stringBuilder)
-                    .dup()
-                    .constantInstruction(key)
-                    .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("(" + value + ")V")));
+            .when(classModel -> optimize(classModel, new StringBuilderConstructorAppend()))
+            .expect(code -> code
+                .newObjectInstruction(stringBuilder)
+                .dup()
+                .constantInstruction(key)
+                .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("(" + value + ")V")));
         });
     }
 
@@ -88,11 +88,11 @@ class OptimizationTest {
                 .constantInstruction(1)
                 .imul();
         })
-            .when(classModel -> optimize(classModel, new MultiplyByOne()))
-            .expect(code -> code
-                .constantInstruction(5)
-                .istore(0)
-                .iload(0));
+        .when(classModel -> optimize(classModel, new MultiplyByOne()))
+        .expect(code -> code
+            .constantInstruction(5)
+            .istore(0)
+            .iload(0));
     }
 
     private ClassModel optimize(ClassModel classModel, Optimization...optimizations) {

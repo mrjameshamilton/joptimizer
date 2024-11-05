@@ -1,13 +1,7 @@
 package eu.jameshamilton.classfile.matcher;
 
-@SuppressWarnings("preview")
 @FunctionalInterface
 public interface Matcher<T> {
-
-    // Field Access
-
-
-    // Method Invocation
 
     boolean matches(T element);
 

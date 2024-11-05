@@ -28,6 +28,6 @@ public class DoubleNegation implements Optimization {
 
     @Override
     public String getName() {
-        return Optimization.super.getName();
+        return "double negation";
     }
 }

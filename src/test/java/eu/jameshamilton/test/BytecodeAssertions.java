@@ -28,11 +28,9 @@ public class BytecodeAssertions {
     
     public static class Given {
         private final ClassModel originalClass;
-        private final ClassHierarchyResolver resolver;
-        
+
         private Given(ClassHierarchyResolver resolver, Consumer<CodeBuilder> instructions) {
-            this.resolver = resolver;
-            
+
             byte[] classBytes = ClassFile.of().build(
                 ClassDesc.of("TestClass"), 
                 cb -> cb.withMethod("test", 

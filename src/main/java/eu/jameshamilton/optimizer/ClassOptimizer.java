@@ -88,12 +88,12 @@ public class ClassOptimizer {
     }
 
     private void optimize(List<Optimization> optimizations, CodeAttribute code, CodeBuilder codeBuilder) {
-        List<CodeElement> elements = code.elementStream().toList();
-        List<CodeElement> executableElements = elements.stream()
+        var elements = code.elementStream().toList();
+        var executableElements = elements.stream()
             .filter(el -> el instanceof Instruction || el instanceof Label || el instanceof ExceptionCatch)
             .toList();
 
-        List<Optimization> optimizationsWithStats = optimizations.stream()
+        var optimizationsWithStats = optimizations.stream()
             .map(opt -> Optimization.withStats(stats, opt))
             .toList();
 
@@ -109,11 +109,11 @@ public class ClassOptimizer {
                 continue;
             }
 
-            int windowSize = Math.min(MAX_WINDOW_SIZE, executableElements.size() - execIndex);
-            Window window = new Window(executableElements.subList(execIndex, execIndex + windowSize));
-            boolean optimized = false;
+            var windowSize = Math.min(MAX_WINDOW_SIZE, executableElements.size() - execIndex);
+            var window = new Window(executableElements.subList(execIndex, execIndex + windowSize));
+            var optimized = false;
 
-            for (Optimization opt : optimizationsWithStats) {
+            for (var opt : optimizationsWithStats) {
                 if (opt.apply(codeBuilder, window)) {
                     optimized = true;
                     break;

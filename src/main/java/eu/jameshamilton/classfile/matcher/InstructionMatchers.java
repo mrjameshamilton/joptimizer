@@ -38,6 +38,7 @@ import static java.lang.classfile.Opcode.LNEG;
 import static java.lang.classfile.Opcode.LSUB;
 import static java.lang.classfile.Opcode.PUTSTATIC;
 
+@SuppressWarnings("preview")
 public class InstructionMatchers {
     public static <T> Matcher<T> instruction(Opcode opcode) {
         return e -> e instanceof Instruction i && i.opcode() == opcode;

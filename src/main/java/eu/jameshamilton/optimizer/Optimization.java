@@ -20,6 +20,7 @@ import eu.jameshamilton.optimizer.deadcode.RedundantStore;
 import eu.jameshamilton.optimizer.inliner.BooleanFieldInliner;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
 import eu.jameshamilton.optimizer.normalize.SwapConstant;
+import eu.jameshamilton.optimizer.string.ConstantStringLength;
 import eu.jameshamilton.optimizer.string.ConstantToStringOptimization;
 import eu.jameshamilton.optimizer.string.StringBuilderAppendCombiner;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
@@ -58,7 +59,8 @@ public interface Optimization {
         new StringBuilderOptimizer(),
         new StringBuilderAppendCombiner(),
         new ConstantToStringOptimization(),
-        new StringBuilderConstructorAppend()
+        new StringBuilderConstructorAppend(),
+        new ConstantStringLength()
     );
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {

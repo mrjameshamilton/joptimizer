@@ -5,6 +5,7 @@ import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.NopRemover;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
+import eu.jameshamilton.optimizer.string.ConstantStringLength;
 import eu.jameshamilton.optimizer.string.ConstantToStringOptimization;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import org.junit.jupiter.api.Test;
@@ -143,6 +144,18 @@ class OptimizationTest {
             .constantInstruction(-1)
             .iload(1)
             .isub());
+    }
+
+    @Test
+    public void constantStringLength() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .invokevirtual(ClassDesc.of("java.lang.String"), "length", MethodTypeDesc.ofDescriptor("()I"))
+        )
+            .when(code -> optimize(code, new ConstantStringLength()))
+            .expect(code -> code
+                .constantInstruction(11)
+            );
     }
 
     private ClassModel optimize(ClassModel classModel, Optimization...optimizations) {

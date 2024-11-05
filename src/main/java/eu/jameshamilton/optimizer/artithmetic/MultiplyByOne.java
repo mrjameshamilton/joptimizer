@@ -28,6 +28,6 @@ public class MultiplyByOne implements Optimization {
 
     @Override
     public String getName() {
-        return Optimization.super.getName();
+        return "multiply by one simplifier";
     }
 }

@@ -1,8 +1,10 @@
 import eu.jameshamilton.optimizer.ClassOptimizer;
 import eu.jameshamilton.optimizer.Optimization;
 import eu.jameshamilton.optimizer.OptimizationStats;
+import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.NopRemover;
+import eu.jameshamilton.optimizer.normalize.AddSubConstant;
 import eu.jameshamilton.optimizer.string.ConstantToStringOptimization;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import java.util.Map;
 
 import static eu.jameshamilton.test.BytecodeAssertions.given;
 import static java.lang.classfile.ClassFile.DeadCodeOption.KEEP_DEAD_CODE;
+import static java.lang.classfile.ClassFile.DeadCodeOption.PATCH_DEAD_CODE;
 import static java.lang.constant.ClassDesc.*;
 import static java.lang.constant.MethodTypeDesc.ofDescriptor;
 
@@ -93,6 +96,53 @@ class OptimizationTest {
             .constantInstruction(5)
             .istore(0)
             .iload(0));
+    }
+
+    @Test
+    public void normalizeConstantAdd() {
+        given(resolver, code -> {
+            code
+                .iconst_0()
+                .istore(1)
+                .constantInstruction(1)
+                .iload(1)
+                .constantInstruction(2)
+                .iadd()
+                .isub();
+        })
+        .when(code -> optimize(code, new AddSubConstant()))
+        .expect(code -> {
+            code
+                .iconst_0()
+                .istore(1)
+                .constantInstruction(1)
+                .constantInstruction(2)
+                .isub()
+                .iload(1)
+                .isub();
+        });
+    }
+
+    @Test
+    public void normalizeConstantAddCombine() {
+        given(resolver, code -> code
+            .iconst_0()
+            .istore(1)
+            .constantInstruction(1)
+            .iload(1)
+            .constantInstruction(2)
+            .iadd()
+            .isub())
+        .when(code -> {
+            var round1 = optimize(code, new AddSubConstant());
+            return optimize(round1, new IntegerConstantArithmeticFolder());
+        })
+        .expect(code -> code
+            .iconst_0()
+            .istore(1)
+            .constantInstruction(-1)
+            .iload(1)
+            .isub());
     }
 
     private ClassModel optimize(ClassModel classModel, Optimization...optimizations) {

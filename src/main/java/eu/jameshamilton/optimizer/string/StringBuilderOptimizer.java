@@ -74,4 +74,9 @@ public class StringBuilderOptimizer implements Optimization {
 
         return false;
     }
+
+    @Override
+    public String getName() {
+        return "string builder optimizer";
+    }
 }

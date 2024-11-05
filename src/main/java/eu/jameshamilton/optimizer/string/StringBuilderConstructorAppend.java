@@ -54,4 +54,9 @@ public class StringBuilderConstructorAppend implements Optimization {
 
         return false;
     }
+
+    @Override
+    public String getName() {
+        return "stringbuilder constructor simplify";
+    }
 }

@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.lang.classfile.ClassHierarchyResolver;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +52,7 @@ public class JarOptimizer {
             // Get all entries that need processing
             var classEntries = new ArrayList<JarEntry>();
             var resourceEntries = new ArrayList<JarEntry>();
+            var errorEntries = Collections.synchronizedSet(new HashSet<JarEntry>());
 
             var entries = jarFile.entries();
             while (entries.hasMoreElements()) {
@@ -65,7 +68,10 @@ public class JarOptimizer {
                 stats.setPass(pass);
                 // Process class files in parallel using virtual threads
                 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-                    var futures = classEntries.stream().map(entry -> runAsync(() -> {
+                    var futures = classEntries.stream()
+                        .filter(o -> !errorEntries.contains(o))
+                        .map(entry -> runAsync(() -> {
+
                         stats.recordFileProcessingStart(entry.getName());
                         try (InputStream is = new BufferedInputStream(jarFile.getInputStream(entry))) {
                             byte[] classBytes = is.readAllBytes();
@@ -85,9 +91,11 @@ public class JarOptimizer {
                                 System.err.println("Error optimizing " + entry.getName() + ": " + e.getMessage());
                                 // Store original bytes on error
                                 optimizedEntries.put(entry.getName(), classBytes);
+                                errorEntries.add(entry);
                             }
                         } catch (IOException e) {
                             stats.recordParseError(entry.getName(), e);
+                            errorEntries.add(entry);
                             throw new CompletionException(e);
                         }
                     }, executor));

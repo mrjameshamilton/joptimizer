@@ -376,12 +376,13 @@ public class InstructionMatchers {
             type.matches(i.typeSymbol());
     }
 
-    public static <T> Matcher<T> invokestatic(ClassDesc owner, String name, MethodTypeDesc type) {
+    public static <T> Matcher<T> invokestatic(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
         return e -> e instanceof InvokeInstruction i &&
             i.opcode() == Opcode.INVOKESTATIC &&
-            i.method().owner().asSymbol().equals(owner) &&
-            i.method().name().stringValue().equals(name) &&
-            i.typeSymbol().equals(type);
+            owner.matches(i.method().owner().asSymbol()) &&
+            name.matches(i.method().name().stringValue()) &&
+            type.matches(i.typeSymbol());
+
     }
 
     public static <T> Matcher<T> goto_(Matcher<Label> label) {

@@ -5,7 +5,9 @@ import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.NopRemover;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
+import eu.jameshamilton.optimizer.string.ConstantStringEquals;
 import eu.jameshamilton.optimizer.string.ConstantStringLength;
+import eu.jameshamilton.optimizer.string.ConstantStringSubstring;
 import eu.jameshamilton.optimizer.string.ConstantToStringOptimization;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import org.junit.jupiter.api.Test;
@@ -155,6 +157,72 @@ class OptimizationTest {
             .when(code -> optimize(code, new ConstantStringLength()))
             .expect(code -> code
                 .constantInstruction(11)
+            );
+    }
+
+
+    @Test
+    public void constantStringSubstring1() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .constantInstruction(6)
+            .invokevirtual(ClassDesc.of("java.lang.String"), "substring", MethodTypeDesc.ofDescriptor("(I)Ljava/lang/String;"))
+        )
+            .when(code -> optimize(code, new ConstantStringSubstring()))
+            .expect(code -> code
+                .constantInstruction("World")
+            );
+    }
+
+    @Test
+    public void constantStringSubstring2() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .constantInstruction(0)
+            .constantInstruction(5)
+            .invokevirtual(ClassDesc.of("java.lang.String"), "substring", MethodTypeDesc.ofDescriptor("(II)Ljava/lang/String;"))
+        )
+            .when(code -> optimize(code, new ConstantStringSubstring()))
+            .expect(code -> code
+                .constantInstruction("Hello")
+            );
+    }
+
+    @Test
+    public void constantStringToString() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .invokevirtual(ClassDesc.of("java.lang.String"), "toString", MethodTypeDesc.ofDescriptor("()Ljava/lang/String;"))
+        )
+            .when(code -> optimize(code, new ConstantToStringOptimization()))
+            .expect(code -> code
+                .constantInstruction("Hello World")
+            );
+    }
+
+    @Test
+    public void constantStringEquals() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .constantInstruction("Hello World")
+            .invokevirtual(ClassDesc.of("java.lang.String"), "equals", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Z"))
+        )
+            .when(code -> optimize(code, new ConstantStringEquals()))
+            .expect(code -> code
+                .constantInstruction(1)
+            );
+    }
+
+    @Test
+    public void constantStringNotEquals() {
+        given(resolver, code -> code
+            .constantInstruction("Hello World")
+            .constantInstruction("Hello Worl")
+            .invokevirtual(ClassDesc.of("java.lang.String"), "equals", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Z"))
+        )
+            .when(code -> optimize(code, new ConstantStringEquals()))
+            .expect(code -> code
+                .constantInstruction(0)
             );
     }
 

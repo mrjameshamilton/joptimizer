@@ -5,6 +5,9 @@ import java.util.Set;
 
 public class ConstantTypeMatcher<T extends ConstantDesc> implements Matcher<T> {
 
+    public static final Matcher<String> STRING = new ConstantTypeMatcher<>(String.class);
+    public static final Matcher<Integer> INTEGER = new ConstantTypeMatcher<>(Integer.class);
+
     private final Set<Class<?>> types;
 
     public ConstantTypeMatcher(Class<?>...types) {

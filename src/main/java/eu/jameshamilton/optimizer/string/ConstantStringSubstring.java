@@ -1,7 +1,6 @@
 package eu.jameshamilton.optimizer.string;
 
 import eu.jameshamilton.classfile.matcher.Capture;
-import eu.jameshamilton.classfile.matcher.InstructionMatchers;
 import eu.jameshamilton.classfile.matcher.Matcher;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
@@ -10,10 +9,10 @@ import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 
+import static eu.jameshamilton.classfile.matcher.ConstantTypeMatcher.INTEGER;
+import static eu.jameshamilton.classfile.matcher.ConstantTypeMatcher.STRING;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstantInteger;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstantString;
 
 public class ConstantStringSubstring implements Optimization {
     private static final Matcher<ClassDesc> stringClass = e -> e.equals(ClassDesc.of("java.lang.String"));
@@ -26,10 +25,11 @@ public class ConstantStringSubstring implements Optimization {
         var string = new Capture<String>();
         var begin = new Capture<Integer>();
         var end = new Capture<Integer>();
+
         if (window.matches(
-            loadConstantString(string),
-            loadConstantInteger(begin),
-            loadConstantInteger(end).optional(),
+            loadConstant(STRING.and(string)),
+            loadConstant(INTEGER.and(begin)),
+            loadConstant(INTEGER.and(end)).optional(),
             invokevirtual(stringClass, substringMethodName, substringMethodType1.or(substringMethodType2))
         )) {
             if (end.get() != null) {

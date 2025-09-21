@@ -7,7 +7,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 
 import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.isub;
@@ -18,9 +18,9 @@ public class AddSubConstant implements Optimization {
         var a = new Capture<Integer>();
         var b = new Capture<Integer>();
         if (window.matches(
-            constantInstruction(a),
+            loadConstant(a),
             instruction(any()),
-            constantInstruction(b),
+            loadConstant(b),
             iadd(),
             isub()
         )) {

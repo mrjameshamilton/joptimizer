@@ -7,7 +7,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ConstantDesc;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.dsub;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.fsub;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
@@ -22,7 +22,7 @@ public class AddZeroFolder implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {
         return window.matches(
-            constantInstruction(ZERO),
+            loadConstant(ZERO),
             isub().or(lsub()).or(fsub()).or(dsub())
                 .or(iadd()).or(ladd()) // cannot do dadd/fadd due to -0.0
         );

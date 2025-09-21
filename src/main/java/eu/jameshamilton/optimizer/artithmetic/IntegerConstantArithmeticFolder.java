@@ -8,7 +8,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.Opcode;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.ineg;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
 import static java.lang.classfile.Opcode.IADD;
@@ -35,8 +35,8 @@ public class IntegerConstantArithmeticFolder implements Optimization {
         var op = new Capture<Opcode>();
 
         if (window.matches(
-            constantInstruction(c1),
-            constantInstruction(c2),
+            loadConstant(c1),
+            loadConstant(c2),
             instruction(integerArithmetic.and(op))
         )) {
             var i1 = c1.get();
@@ -61,7 +61,7 @@ public class IntegerConstantArithmeticFolder implements Optimization {
                 return true;
             }
         } else if (window.matches(
-            constantInstruction(c1.clear()),
+            loadConstant(c1.clear()),
             ineg())
         ) {
             builder.loadConstant(-c1.get());

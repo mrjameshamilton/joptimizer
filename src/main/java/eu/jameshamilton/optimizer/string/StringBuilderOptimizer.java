@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.dup;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokespecial;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
@@ -40,14 +40,14 @@ public class StringBuilderOptimizer implements Optimization {
         if (window.matches(
             newObjectInstruction(stringBuilderOrBufferClass),
             dup(),
-            constantInstruction(collector).optional(),
+            loadConstant(collector).optional(),
             invokespecial(stringBuilderOrBufferClass, constructor, defaultConstructor.or(stringConstructor))
         )) {
 
             int startIndex = window.getMatchedCount();
             do {
                 if (window.matches(startIndex,
-                    constantInstruction(collector),
+                    loadConstant(collector),
                     invokevirtual(stringBuilderOrBufferClass, appendName, any()))
                 ) {
                     startIndex = window.getMatchedCount();

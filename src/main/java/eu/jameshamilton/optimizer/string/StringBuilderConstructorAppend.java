@@ -12,7 +12,7 @@ import java.lang.constant.MethodTypeDesc;
 
 import static eu.jameshamilton.classfile.ConstantDescUtil.constantToTypeDesc;
 import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.dup;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokespecial;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
@@ -35,7 +35,7 @@ public class StringBuilderConstructorAppend implements Optimization {
             newObjectInstruction(stringBuilderOrBufferClass),
             dup(),
             invokespecial(stringBuilderOrBufferClass, constructor, defaultConstructor),
-            constantInstruction(constants),
+            loadConstant(constants),
             invokevirtual(stringBuilderOrBufferClass, appendName, any())
         )) {
             builder

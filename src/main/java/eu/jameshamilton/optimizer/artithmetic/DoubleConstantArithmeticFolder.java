@@ -8,7 +8,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.Opcode;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
 import static java.lang.classfile.Opcode.DADD;
 import static java.lang.classfile.Opcode.DDIV;
@@ -28,8 +28,8 @@ public class DoubleConstantArithmeticFolder implements Optimization {
         var op = new Capture<Opcode>();
 
         if (window.matches(
-            constantInstruction(c1),
-            constantInstruction(c2),
+            loadConstant(c1),
+            loadConstant(c2),
             instruction(doubleArithmetic.and(op))
         )) {
             var i1 = c1.get();

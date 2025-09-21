@@ -9,7 +9,7 @@ import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
 public class ConstantStringEquals implements Optimization {
@@ -26,8 +26,8 @@ public class ConstantStringEquals implements Optimization {
         var string2 = new Capture<String>();
 
         if (window.matches(
-            constantInstruction(string),
-            constantInstruction(string2),
+            loadConstant(string),
+            loadConstant(string2),
             invokevirtual(stringClass, substringMethodName, substringMethodType1)
         )) {
             builder.loadConstant(string.get().equals(string2.get()) ? 1 : 0);

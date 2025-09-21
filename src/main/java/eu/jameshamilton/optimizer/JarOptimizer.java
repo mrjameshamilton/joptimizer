@@ -88,6 +88,7 @@ public class JarOptimizer {
                                 optimizedEntries.put(entry.getName(), optimizedBytes);
                             } catch (Exception e) {
                                 System.err.println("Error optimizing " + entry.getName() + ": " + e.getMessage());
+                                e.printStackTrace();
                                 // Store original bytes on error
                                 optimizedEntries.put(entry.getName(), classBytes);
                                 errorEntries.add(entry);

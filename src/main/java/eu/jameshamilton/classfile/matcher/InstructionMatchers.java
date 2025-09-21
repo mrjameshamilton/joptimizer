@@ -34,7 +34,6 @@ import static java.lang.classfile.Opcode.IFEQ;
 import static java.lang.classfile.Opcode.IFGE;
 import static java.lang.classfile.Opcode.IFLE;
 import static java.lang.classfile.Opcode.IFNE;
-import static java.lang.classfile.Opcode.IINC;
 import static java.lang.classfile.Opcode.LMUL;
 import static java.lang.classfile.Opcode.LNEG;
 import static java.lang.classfile.Opcode.LSUB;
@@ -439,7 +438,38 @@ public class InstructionMatchers {
             slot.matches(s.slot());
     }
 
-    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> constantInstruction(Matcher<T> value) {
+    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(Class<?> expectedType, Matcher<T> value) {
+        return e -> e instanceof ConstantInstruction c &&
+           expectedType.isInstance(c.constantValue()) &&
+           value.matches((T) expectedType.cast(c.constantValue()));
+    }
+
+    public static <Y extends CodeElement> Matcher<Y> loadConstantString(Matcher<String> value) {
+        return e -> e instanceof ConstantInstruction c &&
+            c.constantValue() instanceof String s && value.matches(s);
+    }
+
+    public static <Y extends CodeElement> Matcher<Y> loadConstantInteger(Matcher<Integer> value) {
+        return e -> e instanceof ConstantInstruction c &&
+            c.constantValue() instanceof Integer s && value.matches(s);
+    }
+
+    public static <Y extends CodeElement> Matcher<Y> loadConstantLong(Matcher<Long> value) {
+        return e -> e instanceof ConstantInstruction c &&
+            c.constantValue() instanceof Long s && value.matches(s);
+    }
+
+    public static <Y extends CodeElement> Matcher<Y> loadConstantFloat(Matcher<Float> value) {
+        return e -> e instanceof ConstantInstruction c &&
+            c.constantValue() instanceof Float s && value.matches(s);
+    }
+
+    public static <Y extends CodeElement> Matcher<Y> loadConstantDouble(Matcher<Double> value) {
+        return e -> e instanceof ConstantInstruction c &&
+            c.constantValue() instanceof Double s && value.matches(s);
+    }
+
+    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(Matcher<T> value) {
         return e -> {
             try {
                 return e instanceof ConstantInstruction c &&

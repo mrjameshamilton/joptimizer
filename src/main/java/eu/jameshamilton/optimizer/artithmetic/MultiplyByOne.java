@@ -7,7 +7,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ConstantDesc;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.dmul;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.fmul;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.imul;
@@ -20,7 +20,7 @@ public class MultiplyByOne implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {
         return window.matches(
-            constantInstruction(ONE),
+            loadConstant(ONE),
             imul().or(lmul()).or(dmul()).or(fmul())
         );
     }

@@ -6,7 +6,7 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 
 import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.imul;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
@@ -16,7 +16,7 @@ public class SwapConstant implements Optimization {
     public boolean apply(CodeBuilder builder, Window window) {
         // normalize, so we can match other constant optimizations
         if (window.matches(
-            constantInstruction(any()),
+            loadConstant(any()),
             loadInstruction(any(), any()),
             iadd().or(imul())
         )) {

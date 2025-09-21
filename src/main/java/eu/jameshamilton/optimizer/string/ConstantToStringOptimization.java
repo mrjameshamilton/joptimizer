@@ -9,7 +9,7 @@ import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
 public class ConstantToStringOptimization implements Optimization {
@@ -21,7 +21,7 @@ public class ConstantToStringOptimization implements Optimization {
     public boolean apply(CodeBuilder builder, Window window) {
         var string = new Capture<String>();
         if (window.matches(
-            constantInstruction(string),
+            loadConstant(string),
             invokevirtual(stringClass, toStringName, toStringDescriptor)
         )) {
             builder.loadConstant(string.get());

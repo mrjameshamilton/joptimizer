@@ -7,8 +7,8 @@ import eu.jameshamilton.optimizer.Optimization;
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.TypeKind;
 
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstantInteger;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
@@ -22,7 +22,7 @@ public class IncrementFolder implements Optimization {
         if (window.matches(
             loadInstruction(kind, slot),
             // the integer has to be byte-sized, to fit the iinc operand.
-            constantInstruction(constant.and(i -> i.byteValue() == i)),
+            loadConstantInteger(constant.and(i -> i.byteValue() == i)),
             iadd(),
             storeInstruction(kind, slot))
         ) {

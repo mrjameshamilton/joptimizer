@@ -9,7 +9,6 @@ import java.lang.classfile.TypeKind;
 
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
-@SuppressWarnings("preview")
 public class DoubleStore implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

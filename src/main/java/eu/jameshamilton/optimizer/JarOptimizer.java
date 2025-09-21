@@ -22,7 +22,6 @@ import java.util.jar.JarOutputStream;
 
 import static java.util.concurrent.CompletableFuture.runAsync;
 
-@SuppressWarnings("preview")
 public class JarOptimizer {
 
     public static void main(String[] args) throws IOException {

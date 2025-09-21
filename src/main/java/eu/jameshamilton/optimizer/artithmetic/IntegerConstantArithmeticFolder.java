@@ -23,7 +23,6 @@ import static java.lang.classfile.Opcode.ISUB;
 import static java.lang.classfile.Opcode.IUSHR;
 import static java.lang.classfile.Opcode.IXOR;
 
-@SuppressWarnings("preview")
 public class IntegerConstantArithmeticFolder implements Optimization {
     private static final CollectionMatcher<Opcode> integerArithmetic = new CollectionMatcher<>(
         IADD, ISUB, IMUL, IDIV, IREM, IAND, IOR, IXOR, ISHL, ISHR, IUSHR
@@ -58,14 +57,14 @@ public class IntegerConstantArithmeticFolder implements Optimization {
             };
 
             if (value != null) {
-                builder.constantInstruction(value);
+                builder.loadConstant(value);
                 return true;
             }
         } else if (window.matches(
             constantInstruction(c1.clear()),
             ineg())
         ) {
-            builder.constantInstruction(-c1.get());
+            builder.loadConstant(-c1.get());
             return true;
         }
 

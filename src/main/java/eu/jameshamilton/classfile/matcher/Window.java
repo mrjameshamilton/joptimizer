@@ -4,7 +4,6 @@ import java.lang.classfile.CodeElement;
 import java.util.Arrays;
 import java.util.List;
 
-@SuppressWarnings("preview")
 public class Window {
     private final List<CodeElement> instructions;
     private int matchedCount = 0;

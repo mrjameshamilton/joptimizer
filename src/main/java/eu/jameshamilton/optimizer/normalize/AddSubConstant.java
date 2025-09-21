@@ -12,7 +12,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.isub;
 
-@SuppressWarnings("preview")
 public class AddSubConstant implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {
@@ -26,8 +25,8 @@ public class AddSubConstant implements Optimization {
             isub()
         )) {
             builder
-                .constantInstruction(a.get())
-                .constantInstruction(b.get())
+                .loadConstant(a.get())
+                .loadConstant(b.get())
                 .isub()
                 .with(window.get(1))
                 .isub();

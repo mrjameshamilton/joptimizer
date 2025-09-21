@@ -7,7 +7,6 @@ import java.lang.classfile.CodeBuilder;
 
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.nop;
 
-@SuppressWarnings("preview")
 public class NopRemover implements Optimization {
 
     @Override

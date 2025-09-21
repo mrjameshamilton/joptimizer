@@ -16,7 +16,6 @@ import static java.lang.classfile.Opcode.DMUL;
 import static java.lang.classfile.Opcode.DREM;
 import static java.lang.classfile.Opcode.DSUB;
 
-@SuppressWarnings("preview")
 public class DoubleConstantArithmeticFolder implements Optimization {
     private static final CollectionMatcher<Opcode> doubleArithmetic = new CollectionMatcher<>(
         DADD, DSUB, DMUL, DDIV, DREM
@@ -45,7 +44,7 @@ public class DoubleConstantArithmeticFolder implements Optimization {
             };
 
             if (value != null) {
-                builder.constantInstruction(value);
+                builder.loadConstant(value);
                 return true;
             }
         }

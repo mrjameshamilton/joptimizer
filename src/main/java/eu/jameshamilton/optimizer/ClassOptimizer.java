@@ -64,7 +64,7 @@ public class ClassOptimizer {
 
     public byte[] optimize(List<Optimization> optimizations) {
         byte[] optimizedBytes = of(KEEP_DEAD_CODE, ClassHierarchyResolverOption.of(resolver))
-            .transform(original,
+            .transformClass(original,
                 transformingMethods(
                     (methodBuilder, method) -> {
                         if (method instanceof CodeAttribute codeModel) {
@@ -79,7 +79,7 @@ public class ClassOptimizer {
 
         byte[] originalBytes = ClassFile
             .of(PATCH_DEAD_CODE, ClassHierarchyResolverOption.of(resolver))
-            .transform(original, ClassFileBuilder::with);
+            .transformClass(original, ClassFileBuilder::with);
 
         if (optimizedBytes.length < originalBytes.length) {
             stats.recordClassOptimized(originalBytes.length - optimizedBytes.length);

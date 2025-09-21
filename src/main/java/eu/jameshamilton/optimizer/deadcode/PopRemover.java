@@ -10,7 +10,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruc
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.pop;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.pop2;
 
-@SuppressWarnings("preview")
 public class PopRemover implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

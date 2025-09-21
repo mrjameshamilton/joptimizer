@@ -16,7 +16,6 @@ import static java.lang.classfile.Opcode.FNEG;
 import static java.lang.classfile.Opcode.INEG;
 import static java.lang.classfile.Opcode.LNEG;
 
-@SuppressWarnings("preview")
 public class DoubleNegation implements Optimization {
     private static final Matcher<Opcode> NEGATION_OPCODES = new CollectionMatcher<>(Set.of(INEG, LNEG, FNEG, DNEG));
 

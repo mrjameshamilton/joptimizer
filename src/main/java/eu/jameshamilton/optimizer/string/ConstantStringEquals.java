@@ -12,7 +12,6 @@ import java.lang.constant.MethodTypeDesc;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
-@SuppressWarnings("preview")
 public class ConstantStringEquals implements Optimization {
     private static final Matcher<ClassDesc> stringClass =
         e -> e.equals(ClassDesc.of("java.lang.String"));
@@ -31,7 +30,7 @@ public class ConstantStringEquals implements Optimization {
             constantInstruction(string2),
             invokevirtual(stringClass, substringMethodName, substringMethodType1)
         )) {
-            builder.constantInstruction(string.get().equals(string2.get()) ? 1 : 0);
+            builder.loadConstant(string.get().equals(string2.get()) ? 1 : 0);
             return true;
         }
 

@@ -13,7 +13,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.ifle;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.ifne;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.label;
 
-@SuppressWarnings("preview")
 public class ConditionalJumpNextRemover implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

@@ -9,7 +9,6 @@ import java.lang.classfile.TypeKind;
 
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 
-@SuppressWarnings("preview")
 public class RedundantLoad implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

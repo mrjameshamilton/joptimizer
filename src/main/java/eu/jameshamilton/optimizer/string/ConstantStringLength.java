@@ -12,7 +12,6 @@ import java.lang.constant.MethodTypeDesc;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
-@SuppressWarnings("preview")
 public class ConstantStringLength implements Optimization {
     private static final Matcher<ClassDesc> stringClass = e -> e.equals(ClassDesc.of("java.lang.String"));
     private static final Matcher<String> stringLengthMethodName = e -> e.equals("length");
@@ -25,7 +24,7 @@ public class ConstantStringLength implements Optimization {
             constantInstruction(s),
             invokevirtual(stringClass, stringLengthMethodName, stringLengthMethodType)
         )) {
-            builder.constantInstruction(s.get().length());
+            builder.loadConstant(s.get().length());
             return true;
         }
 

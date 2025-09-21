@@ -12,7 +12,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
-@SuppressWarnings("preview")
 public class IncrementFolder implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

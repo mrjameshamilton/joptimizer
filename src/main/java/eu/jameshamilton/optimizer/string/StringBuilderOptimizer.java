@@ -21,7 +21,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokespeci
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.newObjectInstruction;
 
-@SuppressWarnings("preview")
 public class StringBuilderOptimizer implements Optimization {
     private static final Matcher<ClassDesc> stringBufferClass = e -> e.equals(ClassDesc.of("java.lang.StringBuffer"));
     private static final Matcher<ClassDesc> stringBuilderClass = e -> e.equals(ClassDesc.of("java.lang.StringBuilder"));
@@ -66,7 +65,7 @@ public class StringBuilderOptimizer implements Optimization {
                     return false;
                 }
 
-                codeBuilder.constantInstruction(s);
+                codeBuilder.loadConstant(s);
 
                 return true;
             }

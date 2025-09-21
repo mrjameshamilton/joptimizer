@@ -6,7 +6,6 @@ import java.lang.constant.ClassDesc;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-@SuppressWarnings("preview")
 public class JarClassHierarchyResolver implements ClassHierarchyResolver {
     private final ClassHierarchyResolver resourceClassHierarchyResolver;
 

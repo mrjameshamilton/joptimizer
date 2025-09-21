@@ -21,11 +21,9 @@ import java.util.Map;
 
 import static eu.jameshamilton.test.BytecodeAssertions.given;
 import static java.lang.classfile.ClassFile.DeadCodeOption.KEEP_DEAD_CODE;
-import static java.lang.classfile.ClassFile.DeadCodeOption.PATCH_DEAD_CODE;
-import static java.lang.constant.ClassDesc.*;
+import static java.lang.constant.ClassDesc.of;
 import static java.lang.constant.MethodTypeDesc.ofDescriptor;
 
-@SuppressWarnings("preview")
 class OptimizationTest {
     private final OptimizationStats stats = new OptimizationStats();
     private final ClassHierarchyResolver resolver = ClassHierarchyResolver.defaultResolver();
@@ -46,13 +44,13 @@ class OptimizationTest {
     @Test
     public void testStringToString() {
         given(resolver, code -> code
-            .constantInstruction("string")
+            .loadConstant("string")
             .invokevirtual(of("java.lang.String"), "toString", ofDescriptor("()Ljava/lang/String;"))
             .return_()
         )
         .when(classModel -> optimize(classModel, new ConstantToStringOptimization()))
         .expect(code -> code
-            .constantInstruction("string")
+            .loadConstant("string")
             .return_()
         );
     }
@@ -70,16 +68,16 @@ class OptimizationTest {
         ClassDesc stringBuilder = of("java.lang.StringBuilder");
         constants.forEach((key, value) -> {
             given(resolver, code -> code
-                .newObjectInstruction(stringBuilder)
+                .new_(stringBuilder)
                 .dup()
                 .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("()V"))
-                .constantInstruction(key)
+                .loadConstant(key)
                 .invokevirtual(stringBuilder, "append", MethodTypeDesc.ofDescriptor("(" + value + ")Ljava/lang/StringBuilder;")))
             .when(classModel -> optimize(classModel, new StringBuilderConstructorAppend()))
             .expect(code -> code
-                .newObjectInstruction(stringBuilder)
+                .new_(stringBuilder)
                 .dup()
-                .constantInstruction(key)
+                .loadConstant(key)
                 .invokespecial(stringBuilder, "<init>", MethodTypeDesc.ofDescriptor("(" + value + ")V")));
         });
     }
@@ -88,15 +86,15 @@ class OptimizationTest {
     public void multipleByOne() {
         given(resolver, code -> {
             code
-                .constantInstruction(5)
+                .loadConstant(5)
                 .istore(0)
                 .iload(0)
-                .constantInstruction(1)
+                .loadConstant(1)
                 .imul();
         })
         .when(classModel -> optimize(classModel, new MultiplyByOne()))
         .expect(code -> code
-            .constantInstruction(5)
+            .loadConstant(5)
             .istore(0)
             .iload(0));
     }
@@ -107,9 +105,9 @@ class OptimizationTest {
             code
                 .iconst_0()
                 .istore(1)
-                .constantInstruction(1)
+                .loadConstant(1)
                 .iload(1)
-                .constantInstruction(2)
+                .loadConstant(2)
                 .iadd()
                 .isub();
         })
@@ -118,8 +116,8 @@ class OptimizationTest {
             code
                 .iconst_0()
                 .istore(1)
-                .constantInstruction(1)
-                .constantInstruction(2)
+                .loadConstant(1)
+                .loadConstant(2)
                 .isub()
                 .iload(1)
                 .isub();
@@ -131,9 +129,9 @@ class OptimizationTest {
         given(resolver, code -> code
             .iconst_0()
             .istore(1)
-            .constantInstruction(1)
+            .loadConstant(1)
             .iload(1)
-            .constantInstruction(2)
+            .loadConstant(2)
             .iadd()
             .isub())
         .when(code -> {
@@ -143,7 +141,7 @@ class OptimizationTest {
         .expect(code -> code
             .iconst_0()
             .istore(1)
-            .constantInstruction(-1)
+            .loadConstant(-1)
             .iload(1)
             .isub());
     }
@@ -151,12 +149,12 @@ class OptimizationTest {
     @Test
     public void constantStringLength() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
+            .loadConstant("Hello World")
             .invokevirtual(ClassDesc.of("java.lang.String"), "length", MethodTypeDesc.ofDescriptor("()I"))
         )
             .when(code -> optimize(code, new ConstantStringLength()))
             .expect(code -> code
-                .constantInstruction(11)
+                .loadConstant(11)
             );
     }
 
@@ -164,65 +162,65 @@ class OptimizationTest {
     @Test
     public void constantStringSubstring1() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
-            .constantInstruction(6)
+            .loadConstant("Hello World")
+            .loadConstant(6)
             .invokevirtual(ClassDesc.of("java.lang.String"), "substring", MethodTypeDesc.ofDescriptor("(I)Ljava/lang/String;"))
         )
             .when(code -> optimize(code, new ConstantStringSubstring()))
             .expect(code -> code
-                .constantInstruction("World")
+                .loadConstant("World")
             );
     }
 
     @Test
     public void constantStringSubstring2() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
-            .constantInstruction(0)
-            .constantInstruction(5)
+            .loadConstant("Hello World")
+            .loadConstant(0)
+            .loadConstant(5)
             .invokevirtual(ClassDesc.of("java.lang.String"), "substring", MethodTypeDesc.ofDescriptor("(II)Ljava/lang/String;"))
         )
             .when(code -> optimize(code, new ConstantStringSubstring()))
             .expect(code -> code
-                .constantInstruction("Hello")
+                .loadConstant("Hello")
             );
     }
 
     @Test
     public void constantStringToString() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
+            .loadConstant("Hello World")
             .invokevirtual(ClassDesc.of("java.lang.String"), "toString", MethodTypeDesc.ofDescriptor("()Ljava/lang/String;"))
         )
             .when(code -> optimize(code, new ConstantToStringOptimization()))
             .expect(code -> code
-                .constantInstruction("Hello World")
+                .loadConstant("Hello World")
             );
     }
 
     @Test
     public void constantStringEquals() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
-            .constantInstruction("Hello World")
+            .loadConstant("Hello World")
+            .loadConstant("Hello World")
             .invokevirtual(ClassDesc.of("java.lang.String"), "equals", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Z"))
         )
             .when(code -> optimize(code, new ConstantStringEquals()))
             .expect(code -> code
-                .constantInstruction(1)
+                .loadConstant(1)
             );
     }
 
     @Test
     public void constantStringNotEquals() {
         given(resolver, code -> code
-            .constantInstruction("Hello World")
-            .constantInstruction("Hello Worl")
+            .loadConstant("Hello World")
+            .loadConstant("Hello Worl")
             .invokevirtual(ClassDesc.of("java.lang.String"), "equals", MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)Z"))
         )
             .when(code -> optimize(code, new ConstantStringEquals()))
             .expect(code -> code
-                .constantInstruction(0)
+                .loadConstant(0)
             );
     }
 

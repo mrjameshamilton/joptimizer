@@ -15,7 +15,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.isub;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.ladd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.lsub;
 
-@SuppressWarnings("preview")
 public class AddZeroFolder implements Optimization {
     private static final Matcher<ConstantDesc> NUMBER = c -> c instanceof Number;
     private static final Matcher<ConstantDesc> ZERO = NUMBER.and(c -> c.equals(0) || c.equals(0L) || c.equals(0f) || c.equals(0.0));

@@ -18,7 +18,6 @@ import static eu.jameshamilton.classfile.matcher.Any.any;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
-@SuppressWarnings("preview")
 public class StringBuilderAppendCombiner implements Optimization {
     private static final Matcher<ClassDesc> stringBufferClass = e -> e.equals(ClassDesc.of("java.lang.StringBuffer"));
     private static final Matcher<ClassDesc> stringBuilderClass = e -> e.equals(ClassDesc.of("java.lang.StringBuilder"));
@@ -46,7 +45,7 @@ public class StringBuilderAppendCombiner implements Optimization {
             }
 
             codeBuilder
-                .constantInstruction(s)
+                .loadConstant(s)
                 .invokevirtual(
                     classDescCapture.get(),
                     "append",

@@ -11,7 +11,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.imul;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 
-@SuppressWarnings("preview")
 public class SwapConstant implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

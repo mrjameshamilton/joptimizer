@@ -18,7 +18,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokespeci
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.newObjectInstruction;
 
-@SuppressWarnings("preview")
 public class StringBuilderConstructorAppend implements Optimization {
     private static final Matcher<ClassDesc> stringBufferClass = e -> e.equals(ClassDesc.of("java.lang.StringBuffer"));
     private static final Matcher<ClassDesc> stringBuilderClass = e -> e.equals(ClassDesc.of("java.lang.StringBuilder"));
@@ -40,9 +39,9 @@ public class StringBuilderConstructorAppend implements Optimization {
             invokevirtual(stringBuilderOrBufferClass, appendName, any())
         )) {
             builder
-                .newObjectInstruction(classDescCapture.get())
+                .new_(classDescCapture.get())
                 .dup()
-                .constantInstruction(constants.get())
+                .loadConstant(constants.get())
                 .invokespecial(
                     classDescCapture.get(),
                     "<init>",

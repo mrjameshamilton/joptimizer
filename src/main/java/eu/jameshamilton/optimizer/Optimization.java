@@ -8,6 +8,7 @@ import eu.jameshamilton.optimizer.artithmetic.IncrementFolder;
 import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.ConditionalJumpNextRemover;
+import eu.jameshamilton.optimizer.deadcode.DoubleIncrementCombiner;
 import eu.jameshamilton.optimizer.deadcode.DoubleNegation;
 import eu.jameshamilton.optimizer.deadcode.DoubleStore;
 import eu.jameshamilton.optimizer.deadcode.GotoNextRemover;
@@ -33,7 +34,6 @@ import eu.jameshamilton.optimizer.type.TypeConversionSimplifier;
 import java.lang.classfile.CodeBuilder;
 import java.util.List;
 
-@SuppressWarnings("preview")
 public interface Optimization {
 
     List<Optimization> optimizations = List.of(
@@ -64,7 +64,8 @@ public interface Optimization {
         new StringBuilderConstructorAppend(),
         new ConstantStringLength(),
         new ConstantStringSubstring(),
-        new ConstantStringEquals()
+        new ConstantStringEquals(),
+        new DoubleIncrementCombiner()
     );
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {

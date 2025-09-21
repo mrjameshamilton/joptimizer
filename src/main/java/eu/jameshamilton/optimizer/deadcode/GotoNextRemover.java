@@ -10,7 +10,6 @@ import java.lang.classfile.Label;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.goto_;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.label;
 
-@SuppressWarnings("preview")
 public class GotoNextRemover implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

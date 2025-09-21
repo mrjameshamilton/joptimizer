@@ -13,7 +13,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2l;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2s;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.l2i;
 
-@SuppressWarnings("preview")
 public class TypeConversionSimplifier implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

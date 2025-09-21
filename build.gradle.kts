@@ -9,16 +9,19 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.3"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation(platform(libs.junit.bom))
+    testImplementation(libs.bundles.junit.jupiter)
+    testRuntimeOnly(libs.bundles.junit.runtime)
 }
 
 tasks.test {
     useJUnitPlatform()
-    jvmArgs("--enable-preview")
 }
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs.add("--enable-preview")
-}

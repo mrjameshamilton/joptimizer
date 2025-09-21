@@ -9,6 +9,7 @@ import java.lang.classfile.constantpool.ClassEntry;
 import java.lang.classfile.instruction.BranchInstruction;
 import java.lang.classfile.instruction.ConstantInstruction;
 import java.lang.classfile.instruction.FieldInstruction;
+import java.lang.classfile.instruction.IncrementInstruction;
 import java.lang.classfile.instruction.InvokeInstruction;
 import java.lang.classfile.instruction.LoadInstruction;
 import java.lang.classfile.instruction.NewObjectInstruction;
@@ -33,12 +34,12 @@ import static java.lang.classfile.Opcode.IFEQ;
 import static java.lang.classfile.Opcode.IFGE;
 import static java.lang.classfile.Opcode.IFLE;
 import static java.lang.classfile.Opcode.IFNE;
+import static java.lang.classfile.Opcode.IINC;
 import static java.lang.classfile.Opcode.LMUL;
 import static java.lang.classfile.Opcode.LNEG;
 import static java.lang.classfile.Opcode.LSUB;
 import static java.lang.classfile.Opcode.PUTSTATIC;
 
-@SuppressWarnings("preview")
 public class InstructionMatchers {
     public static <T> Matcher<T> instruction(Opcode opcode) {
         return e -> e instanceof Instruction i && i.opcode() == opcode;
@@ -46,6 +47,11 @@ public class InstructionMatchers {
 
     public static <T> Matcher<T> instruction(Matcher<Opcode> opcode) {
         return e -> e instanceof Instruction i && opcode.matches(i.opcode());
+    }
+
+    public static <T> Matcher<T> iinc(Matcher<Integer> slot, Matcher<Integer> amount) {
+        return e -> e instanceof IncrementInstruction i &&
+            slot.matches(i.slot()) && amount.matches(i.constant());
     }
 
     // Loading Constants

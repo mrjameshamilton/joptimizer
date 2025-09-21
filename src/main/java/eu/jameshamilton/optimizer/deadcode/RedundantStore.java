@@ -10,7 +10,6 @@ import java.lang.classfile.TypeKind;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
-@SuppressWarnings("preview")
 public class RedundantStore implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

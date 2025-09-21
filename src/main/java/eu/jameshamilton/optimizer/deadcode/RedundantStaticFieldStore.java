@@ -10,7 +10,6 @@ import java.lang.constant.ClassDesc;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.getstatic;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.putstatic;
 
-@SuppressWarnings("preview")
 public class RedundantStaticFieldStore implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

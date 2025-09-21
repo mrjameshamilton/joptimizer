@@ -12,7 +12,6 @@ import java.lang.constant.MethodTypeDesc;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.constantInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
-@SuppressWarnings("preview")
 public class ConstantStringSubstring implements Optimization {
     private static final Matcher<ClassDesc> stringClass = e -> e.equals(ClassDesc.of("java.lang.String"));
     private static final Matcher<String> substringMethodName = e -> e.equals("substring");
@@ -37,13 +36,13 @@ public class ConstantStringSubstring implements Optimization {
                     return false;
                 }
 
-                builder.constantInstruction(string.get().substring(begin.get(), end.get()));
+                builder.loadConstant(string.get().substring(begin.get(), end.get()));
             } else {
                 if (begin.get() < 0) {
                     return false;
                 }
 
-                builder.constantInstruction(string.get().substring(begin.get()));
+                builder.loadConstant(string.get().substring(begin.get()));
             }
 
             return true;

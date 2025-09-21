@@ -9,7 +9,6 @@ import java.lang.classfile.constantpool.ClassEntry;
 
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.checkcast;
 
-@SuppressWarnings("preview")
 public class CheckcastSimplifier implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

@@ -11,7 +11,6 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.aload;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.getfield;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.putfield;
 
-@SuppressWarnings("preview")
 public class RedundantFieldStore implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {

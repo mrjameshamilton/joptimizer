@@ -1,16 +1,16 @@
 package eu.jameshamilton.test;
 
-import java.lang.classfile.*;
+import java.lang.classfile.Attributes;
+import java.lang.classfile.ClassFile;
 import java.lang.classfile.ClassFile.ClassHierarchyResolverOption;
-import java.lang.classfile.instruction.ConstantInstruction;
-import java.lang.classfile.instruction.InvokeInstruction;
-import java.lang.classfile.instruction.LoadInstruction;
-import java.lang.classfile.instruction.StoreInstruction;
+import java.lang.classfile.ClassHierarchyResolver;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.CodeElement;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,7 +19,6 @@ import static java.lang.classfile.ClassFile.ACC_STATIC;
 import static java.lang.classfile.ClassFile.DeadCodeOption.KEEP_DEAD_CODE;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SuppressWarnings("preview")
 public class BytecodeAssertions {
     
     public static Given given(ClassHierarchyResolver resolver, Consumer<CodeBuilder> instructions) {
@@ -76,7 +75,7 @@ public class BytecodeAssertions {
         List<CodeElement> instructions = new ArrayList<>();
         classModel.methods().forEach(method -> {
             if (method.methodName().stringValue().equals("test")) {
-                method.findAttribute(Attributes.CODE).ifPresent(code -> {
+                method.findAttribute(Attributes.code()).ifPresent(code -> {
                     code.forEach(instructions::add);
                 });
             }

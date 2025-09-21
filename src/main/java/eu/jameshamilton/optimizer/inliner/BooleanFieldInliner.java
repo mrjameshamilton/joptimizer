@@ -12,7 +12,6 @@ import java.lang.constant.MethodTypeDesc;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.getstatic;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 
-@SuppressWarnings("preview")
 public class BooleanFieldInliner implements Optimization {
     private static final Matcher<ClassDesc> javaLangBoolean = e -> e.equals(ClassDesc.of("java.lang.Boolean"));
     private static final Matcher<String> trueOrFalseField = e -> e.equals("TRUE") || e.equals("FALSE");
@@ -26,7 +25,7 @@ public class BooleanFieldInliner implements Optimization {
             getstatic(javaLangBoolean, trueOrFalseField.and(fieldName), javaLangBoolean),
             invokevirtual(javaLangBoolean, booleanValueMethod, booleanValueMethodTypeDesc)
         )) {
-            codeBuilder.constantInstruction(fieldName.matches("TRUE") ? 1 : 0);
+            codeBuilder.loadConstant(fieldName.matches("TRUE") ? 1 : 0);
         }
 
         return window.getMatchedCount() > 0;

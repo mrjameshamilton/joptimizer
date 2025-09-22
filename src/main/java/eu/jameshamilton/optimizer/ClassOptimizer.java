@@ -2,6 +2,7 @@ package eu.jameshamilton.optimizer;
 
 import eu.jameshamilton.classfile.matcher.Window;
 
+import java.lang.classfile.Attributes;
 import java.lang.classfile.ClassFile;
 import java.lang.classfile.ClassFileBuilder;
 import java.lang.classfile.ClassHierarchyResolver;
@@ -10,6 +11,7 @@ import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.CodeElement;
 import java.lang.classfile.Instruction;
 import java.lang.classfile.Label;
+import java.lang.classfile.TypeAnnotation;
 import java.lang.classfile.attribute.CodeAttribute;
 import java.lang.classfile.instruction.ExceptionCatch;
 import java.util.Arrays;
@@ -21,7 +23,6 @@ import static java.lang.classfile.ClassFile.DeadCodeOption.PATCH_DEAD_CODE;
 import static java.lang.classfile.ClassFile.of;
 import static java.lang.classfile.ClassTransform.transformingMethods;
 
-@SuppressWarnings("preview")
 public class ClassOptimizer {
     private static final int MAX_WINDOW_SIZE = 10;
 
@@ -88,6 +89,12 @@ public class ClassOptimizer {
     }
 
     private void optimize(List<Optimization> optimizations, CodeAttribute code, CodeBuilder codeBuilder) {
+        if (hasPositionDependentAnnotations(code)) {
+            // Conservatively skip methods with position dependent annotations
+            code.elementStream().forEach(codeBuilder::with);
+            return;
+        }
+
         var elements = code.elementStream().toList();
         var executableElements = elements.stream()
             .filter(el -> el instanceof Instruction || el instanceof Label || el instanceof ExceptionCatch)
@@ -130,5 +137,29 @@ public class ClassOptimizer {
                 index++;
             }
         }
+    }
+
+    public boolean hasPositionDependentAnnotations(CodeAttribute code) {
+        return code.findAttribute(Attributes.runtimeVisibleTypeAnnotations())
+            .map(attr -> attr.annotations().stream()
+                .anyMatch(this::isPositionDependent))
+            .orElse(false) ||
+            code.findAttribute(Attributes.runtimeInvisibleTypeAnnotations())
+                .map(attr -> attr.annotations().stream()
+                    .anyMatch(this::isPositionDependent))
+                .orElse(false);
+    }
+
+    private boolean isPositionDependent(TypeAnnotation annotation) {
+        return switch (annotation.targetInfo().targetType()) {
+            case TypeAnnotation.TargetType.LOCAL_VARIABLE,
+                 TypeAnnotation.TargetType.RESOURCE_VARIABLE,
+                 TypeAnnotation.TargetType.CAST,
+                 TypeAnnotation.TargetType.INSTANCEOF,
+                 TypeAnnotation.TargetType.NEW,
+                 TypeAnnotation.TargetType.CONSTRUCTOR_REFERENCE,
+                 TypeAnnotation.TargetType.METHOD_REFERENCE -> true;
+            default -> false;
+        };
     }
 }

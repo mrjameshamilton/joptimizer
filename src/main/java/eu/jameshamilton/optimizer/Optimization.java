@@ -3,6 +3,7 @@ package eu.jameshamilton.optimizer;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.artithmetic.AddZeroFolder;
 import eu.jameshamilton.optimizer.artithmetic.ConstantConversionFolder;
+import eu.jameshamilton.optimizer.artithmetic.IntegerPushSimplifier;
 import eu.jameshamilton.optimizer.artithmetic.DoubleConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.IncrementFolder;
 import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
@@ -18,6 +19,7 @@ import eu.jameshamilton.optimizer.deadcode.RedundantFieldStore;
 import eu.jameshamilton.optimizer.deadcode.RedundantLoad;
 import eu.jameshamilton.optimizer.deadcode.RedundantStaticFieldStore;
 import eu.jameshamilton.optimizer.deadcode.RedundantStore;
+import eu.jameshamilton.optimizer.deadcode.ZeroComparisonOptimizer;
 import eu.jameshamilton.optimizer.inliner.BooleanFieldInliner;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
 import eu.jameshamilton.optimizer.normalize.SwapConstant;
@@ -65,7 +67,9 @@ public interface Optimization {
         new ConstantStringLength(),
         new ConstantStringSubstring(),
         new ConstantStringEquals(),
-        new DoubleIncrementCombiner()
+        new DoubleIncrementCombiner(),
+        new IntegerPushSimplifier(),
+        new ZeroComparisonOptimizer()
     );
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {

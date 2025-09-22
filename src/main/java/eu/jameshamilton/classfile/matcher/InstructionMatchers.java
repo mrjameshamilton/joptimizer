@@ -34,6 +34,12 @@ import static java.lang.classfile.Opcode.IFEQ;
 import static java.lang.classfile.Opcode.IFGE;
 import static java.lang.classfile.Opcode.IFLE;
 import static java.lang.classfile.Opcode.IFNE;
+import static java.lang.classfile.Opcode.IF_ICMPEQ;
+import static java.lang.classfile.Opcode.IF_ICMPGE;
+import static java.lang.classfile.Opcode.IF_ICMPGT;
+import static java.lang.classfile.Opcode.IF_ICMPLE;
+import static java.lang.classfile.Opcode.IF_ICMPLT;
+import static java.lang.classfile.Opcode.IF_ICMPNE;
 import static java.lang.classfile.Opcode.LMUL;
 import static java.lang.classfile.Opcode.LNEG;
 import static java.lang.classfile.Opcode.LSUB;
@@ -84,6 +90,11 @@ public class InstructionMatchers {
             l.opcode() == Opcode.ILOAD && l.slot() == slot;
     }
 
+    public static <T> Matcher<T> iload(Matcher<Integer> slot) {
+        return e -> e instanceof LoadInstruction l &&
+            l.opcode() == Opcode.ILOAD && slot.matches(l.slot());
+    }
+
     public static <T> Matcher<T> lload(int slot) {
         return e -> e instanceof LoadInstruction l &&
             l.opcode() == Opcode.LLOAD && l.slot() == slot;
@@ -102,6 +113,11 @@ public class InstructionMatchers {
     public static <T> Matcher<T> aload(Matcher<Integer> slot) {
         return e -> e instanceof LoadInstruction l &&
             l.opcode() == Opcode.ALOAD && slot.matches(l.slot());
+    }
+
+    public static <T> Matcher<T> aload(int slot) {
+        return e -> e instanceof LoadInstruction l &&
+            l.opcode() == Opcode.ALOAD && l.slot() == slot;
     }
 
     // Storing Local Variables
@@ -425,6 +441,45 @@ public class InstructionMatchers {
             labelMatcher.matches(b.target());
     }
 
+    public static <T> Matcher<T> if_icmpeq(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPEQ &&
+            labelMatcher.matches(b.target());
+    }
+
+    public static <T> Matcher<T> if_icmpne(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPNE
+            && labelMatcher.matches(b.target());
+    }
+
+    public static <T> Matcher<T> if_icmplt(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPLT
+            && labelMatcher.matches(b.target());
+    }
+
+    public static <T> Matcher<T> if_icmpge(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPGE
+            && labelMatcher.matches(b.target());
+    }
+
+    public static <T> Matcher<T> if_icmpgt(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPGT
+            && labelMatcher.matches(b.target());
+    }
+
+    public static <T> Matcher<T> if_icmple(Matcher<Label> labelMatcher) {
+        return e -> e instanceof BranchInstruction b
+            && b.opcode() == IF_ICMPLE
+            && labelMatcher.matches(b.target());
+    }
+
+
+
+
     // Utility matchers with captures
     public static Matcher<CodeElement> loadInstruction(Matcher<TypeKind> type, Matcher<Integer> slot) {
         return e -> e instanceof LoadInstruction l &&
@@ -486,5 +541,21 @@ public class InstructionMatchers {
 
     public static <T> Matcher<T> newObjectInstruction(Matcher<ClassDesc> classDesc) {
         return e -> e instanceof NewObjectInstruction n && classDesc.matches(n.className().asSymbol());
+    }
+
+    public static <T> Matcher<T> bipush(int value) {
+        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.BIPUSH && ((Integer)c.constantValue()).equals(value);
+    }
+
+    public static <T> Matcher<T> sipush(int value) {
+        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.SIPUSH && ((Integer)c.constantValue()).equals(value);
+    }
+
+    public static <T extends Integer, Y extends CodeElement> Matcher<Y> bipush(Matcher<T> value) {
+        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.BIPUSH && value.matches((T)c.constantValue());
+    }
+
+    public static <T extends Integer, Y extends CodeElement> Matcher<Y>  sipush(Matcher<T> value) {
+        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.SIPUSH && value.matches((T)c.constantValue());
     }
 }

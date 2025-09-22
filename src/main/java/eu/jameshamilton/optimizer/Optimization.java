@@ -23,6 +23,7 @@ import eu.jameshamilton.optimizer.deadcode.ZeroComparisonOptimizer;
 import eu.jameshamilton.optimizer.inliner.BooleanFieldInliner;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
 import eu.jameshamilton.optimizer.normalize.SwapConstant;
+import eu.jameshamilton.optimizer.string.ClassConstantOptimizer;
 import eu.jameshamilton.optimizer.string.ConstantStringEquals;
 import eu.jameshamilton.optimizer.string.ConstantStringLength;
 import eu.jameshamilton.optimizer.string.ConstantStringSubstring;
@@ -31,6 +32,7 @@ import eu.jameshamilton.optimizer.string.StringBuilderAppendCombiner;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import eu.jameshamilton.optimizer.string.StringBuilderOptimizer;
 import eu.jameshamilton.optimizer.type.CheckcastSimplifier;
+import eu.jameshamilton.optimizer.type.ReflectionConstantFolder;
 import eu.jameshamilton.optimizer.type.TypeConversionSimplifier;
 
 import java.lang.classfile.CodeBuilder;
@@ -69,7 +71,8 @@ public interface Optimization {
         new ConstantStringEquals(),
         new DoubleIncrementCombiner(),
         new IntegerPushSimplifier(),
-        new ZeroComparisonOptimizer()
+        new ZeroComparisonOptimizer(),
+        new ClassConstantOptimizer()
     );
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {

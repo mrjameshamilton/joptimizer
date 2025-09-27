@@ -7,6 +7,7 @@ import eu.jameshamilton.optimizer.artithmetic.DoubleConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.IncrementFolder;
 import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.IntegerPushSimplifier;
+import eu.jameshamilton.optimizer.artithmetic.LongConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.ConditionalJumpNextRemover;
 import eu.jameshamilton.optimizer.deadcode.DoubleIncrementCombiner;
@@ -44,6 +45,7 @@ public interface Optimization {
                 new NopRemover(),
                 new ConstantConversionFolder(),
                 new IntegerConstantArithmeticFolder(),
+                new LongConstantArithmeticFolder(),
                 new PopRemover(),
                 new RedundantStore(),
                 new RedundantLoad(),

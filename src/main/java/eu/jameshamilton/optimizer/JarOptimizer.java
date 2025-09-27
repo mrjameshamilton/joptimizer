@@ -1,6 +1,8 @@
 package eu.jameshamilton.optimizer;
 
 import eu.jameshamilton.classfile.JarClassHierarchyResolver;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,6 +14,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,13 +27,15 @@ import static java.util.concurrent.CompletableFuture.runAsync;
 
 public class JarOptimizer {
 
-    public static void main(String[] args) throws IOException {
+    private static final Logger logger = LogManager.getLogger(JarOptimizer.class);
+
+    static void main(String[] args) throws IOException {
         var input = Path.of(args[0]);
         OptimizationStats stats = new OptimizationStats();
 
         if (input.getFileName().toString().endsWith(".jar")) {
             if (args.length != 2) {
-                System.err.println("Expected output jar name");
+                logger.error("Expected output jar name");
             }
             optimizeJar(stats, args[0], args[1]);
         }
@@ -64,7 +69,9 @@ public class JarOptimizer {
             }
 
             for (int pass = 1; pass <= 3; pass++) {
+                logger.info("Optimizing pass {}...", pass);
                 stats.setPass(pass);
+                logger.info("Processing {} class files", classEntries.size());
                 // Process class files in parallel using virtual threads
                 try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
                     var futures = classEntries.stream()
@@ -84,11 +91,17 @@ public class JarOptimizer {
 
                                 stats.recordParseSuccess(entry.getName());
                                 var classModelOptimizer = new ClassOptimizer(stats, resolver, currentBytes);
-                                byte[] optimizedBytes = classModelOptimizer.optimize(Optimization.optimizations);
-                                optimizedEntries.put(entry.getName(), optimizedBytes);
+                                Optional<byte[]> optimizedBytes = classModelOptimizer.optimize(Optimization.optimizations);
+                                if (optimizedBytes.isEmpty()) {
+                                    logger.warn("Could not optimize {}", entry.getName());
+                                    // Store original bytes on error
+                                    optimizedEntries.put(entry.getName(), classBytes);
+                                    errorEntries.add(entry);
+                                } else {
+                                    optimizedEntries.put(entry.getName(), optimizedBytes.get());
+                                }
                             } catch (Exception e) {
-                                System.err.println("Error optimizing " + entry.getName() + ": " + e.getMessage());
-                                e.printStackTrace();
+                                logger.error("Error optimizing {}: {}", entry.getName(), e.getMessage(), e);
                                 // Store original bytes on error
                                 optimizedEntries.put(entry.getName(), classBytes);
                                 errorEntries.add(entry);
@@ -102,10 +115,12 @@ public class JarOptimizer {
 
                     // Wait for all optimization tasks to complete
                     CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+
+                    stats.printPassSummary();
                 }
             }
 
-            System.out.println("\nWriting optimized JAR...");
+            logger.info("Writing optimized JAR...");
 
             try (var jos = new JarOutputStream(new BufferedOutputStream(new FileOutputStream(outputJarPath)))) {
                 for (var entry : classEntries) {
@@ -125,7 +140,7 @@ public class JarOptimizer {
             }
         }
 
-        System.out.println("Optimized JAR written to: " + outputJarPath);
+        logger.info("Optimized JAR written to: {}", outputJarPath);
     }
 
 

@@ -13,6 +13,7 @@ import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import org.junit.jupiter.api.Test;
 
 import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassFileBuilder;
 import java.lang.classfile.ClassHierarchyResolver;
 import java.lang.classfile.ClassModel;
 import java.lang.constant.ClassDesc;
@@ -225,7 +226,8 @@ class OptimizationTest {
     }
 
     private ClassModel optimize(ClassModel classModel, Optimization...optimizations) {
-        byte[] bytes = new ClassOptimizer(stats, resolver, classModel).optimize(optimizations);
+        byte[] inputBytes = ClassFile.of(KEEP_DEAD_CODE).transformClass(classModel, ClassFileBuilder::with);
+        byte[] bytes = new ClassOptimizer(stats, resolver, inputBytes).optimize(optimizations).get();
         return ClassFile.of(KEEP_DEAD_CODE).parse(bytes);
     }
 }

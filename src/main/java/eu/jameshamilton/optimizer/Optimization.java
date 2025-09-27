@@ -32,15 +32,13 @@ import eu.jameshamilton.optimizer.string.StringBuilderAppendCombiner;
 import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import eu.jameshamilton.optimizer.string.StringBuilderOptimizer;
 import eu.jameshamilton.optimizer.type.CheckcastSimplifier;
-import eu.jameshamilton.optimizer.type.ReflectionConstantFolder;
 import eu.jameshamilton.optimizer.type.TypeConversionSimplifier;
 
 import java.lang.classfile.CodeBuilder;
-import java.util.List;
 
 public interface Optimization {
 
-    List<Optimization> optimizations = List.of(
+    Optimization[] optimizations = new Optimization[]{
         new AddSubConstant(),
         new SwapConstant(),
         new NopRemover(),
@@ -73,7 +71,7 @@ public interface Optimization {
         new IntegerPushSimplifier(),
         new ZeroComparisonOptimizer(),
         new ClassConstantOptimizer()
-    );
+    };
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {
         return new Optimization() {

@@ -1,5 +1,6 @@
 package eu.jameshamilton.optimizer.string;
 
+import static eu.jameshamilton.classfile.matcher.ConstantTypeMatcher.STRING;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 
@@ -22,7 +23,7 @@ public class ConstantToStringOptimization implements Optimization {
     public boolean apply(CodeBuilder builder, Window window) {
         var string = new Capture<String>();
         if (window.matches(
-                loadConstant(string),
+                loadConstant(STRING.and(string)),
                 invokevirtual(stringClass, toStringName, toStringDescriptor))) {
             builder.loadConstant(string.get());
             return true;

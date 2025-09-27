@@ -1,5 +1,6 @@
 package eu.jameshamilton.optimizer.string;
 
+import static eu.jameshamilton.classfile.matcher.ConstantTypeMatcher.STRING;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 
@@ -24,8 +25,8 @@ public class ConstantStringEquals implements Optimization {
         var string2 = new Capture<String>();
 
         if (window.matches(
-                loadConstant(string),
-                loadConstant(string2),
+                loadConstant(STRING.and(string)),
+                loadConstant(STRING.and(string2)),
                 invokevirtual(stringClass, substringMethodName, substringMethodType1))) {
             builder.loadConstant(string.get().equals(string2.get()) ? 1 : 0);
             return true;

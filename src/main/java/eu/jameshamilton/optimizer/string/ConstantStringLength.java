@@ -1,5 +1,6 @@
 package eu.jameshamilton.optimizer.string;
 
+import static eu.jameshamilton.classfile.matcher.ConstantTypeMatcher.STRING;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 
@@ -22,7 +23,7 @@ public class ConstantStringLength implements Optimization {
     public boolean apply(CodeBuilder builder, Window window) {
         var s = new Capture<String>();
         if (window.matches(
-                loadConstant(s),
+                loadConstant(STRING.and(s)),
                 invokevirtual(stringClass, stringLengthMethodName, stringLengthMethodType))) {
             builder.loadConstant(s.get().length());
             return true;

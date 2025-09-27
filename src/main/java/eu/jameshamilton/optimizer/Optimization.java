@@ -21,6 +21,7 @@ import eu.jameshamilton.optimizer.deadcode.RedundantLoad;
 import eu.jameshamilton.optimizer.deadcode.RedundantStaticFieldStore;
 import eu.jameshamilton.optimizer.deadcode.RedundantStore;
 import eu.jameshamilton.optimizer.deadcode.ZeroComparisonOptimizer;
+import eu.jameshamilton.optimizer.deadcode.ImmediateReload;
 import eu.jameshamilton.optimizer.inliner.BooleanFieldInliner;
 import eu.jameshamilton.optimizer.normalize.AddSubConstant;
 import eu.jameshamilton.optimizer.normalize.SwapConstant;
@@ -72,7 +73,8 @@ public interface Optimization {
                 new DoubleIncrementCombiner(),
                 new IntegerPushSimplifier(),
                 new ZeroComparisonOptimizer(),
-                new ClassConstantOptimizer()
+                new ClassConstantOptimizer(),
+                new ImmediateReload(),
             };
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {

@@ -14,7 +14,6 @@ public class Capture<T> implements Matcher<T> {
             return true;
         }
         return value.equals(newValue);
-
     }
 
     public T get() {

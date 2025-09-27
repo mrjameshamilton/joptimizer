@@ -1,35 +1,23 @@
 package eu.jameshamilton.optimizer.normalize;
 
-import eu.jameshamilton.classfile.matcher.Capture;
-import eu.jameshamilton.classfile.matcher.Window;
-import eu.jameshamilton.optimizer.Optimization;
-
-import java.lang.classfile.CodeBuilder;
-
 import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.isub;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
+
+import eu.jameshamilton.classfile.matcher.Capture;
+import eu.jameshamilton.classfile.matcher.Window;
+import eu.jameshamilton.optimizer.Optimization;
+import java.lang.classfile.CodeBuilder;
 
 public class AddSubConstant implements Optimization {
     @Override
     public boolean apply(CodeBuilder builder, Window window) {
         var a = new Capture<Integer>();
         var b = new Capture<Integer>();
-        if (window.matches(
-            loadConstant(a),
-            instruction(any()),
-            loadConstant(b),
-            iadd(),
-            isub()
-        )) {
-            builder
-                .loadConstant(a.get())
-                .loadConstant(b.get())
-                .isub()
-                .with(window.get(1))
-                .isub();
+        if (window.matches(loadConstant(a), instruction(any()), loadConstant(b), iadd(), isub())) {
+            builder.loadConstant(a.get()).loadConstant(b.get()).isub().with(window.get(1)).isub();
             return true;
         }
 

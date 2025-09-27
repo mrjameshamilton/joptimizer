@@ -1,11 +1,5 @@
 package eu.jameshamilton.optimizer.artithmetic;
 
-import eu.jameshamilton.classfile.matcher.Capture;
-import eu.jameshamilton.classfile.matcher.Window;
-import eu.jameshamilton.optimizer.Optimization;
-
-import java.lang.classfile.CodeBuilder;
-
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2b;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2c;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2d;
@@ -13,6 +7,11 @@ import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2f;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2l;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.i2s;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
+
+import eu.jameshamilton.classfile.matcher.Capture;
+import eu.jameshamilton.classfile.matcher.Window;
+import eu.jameshamilton.optimizer.Optimization;
+import java.lang.classfile.CodeBuilder;
 
 public class ConstantConversionFolder implements Optimization {
     @Override

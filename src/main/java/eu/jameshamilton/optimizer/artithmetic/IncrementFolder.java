@@ -1,16 +1,15 @@
 package eu.jameshamilton.optimizer.artithmetic;
 
-import eu.jameshamilton.classfile.matcher.Capture;
-import eu.jameshamilton.classfile.matcher.Window;
-import eu.jameshamilton.optimizer.Optimization;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.TypeKind;
-
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.iadd;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstantInteger;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
+
+import eu.jameshamilton.classfile.matcher.Capture;
+import eu.jameshamilton.classfile.matcher.Window;
+import eu.jameshamilton.optimizer.Optimization;
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.TypeKind;
 
 public class IncrementFolder implements Optimization {
     @Override
@@ -20,12 +19,11 @@ public class IncrementFolder implements Optimization {
         Capture<TypeKind> kind = new Capture<>();
 
         if (window.matches(
-            loadInstruction(kind, slot),
-            // the integer has to be byte-sized, to fit the iinc operand.
-            loadConstantInteger(constant.and(i -> i.byteValue() == i)),
-            iadd(),
-            storeInstruction(kind, slot))
-        ) {
+                loadInstruction(kind, slot),
+                // the integer has to be byte-sized, to fit the iinc operand.
+                loadConstantInteger(constant.and(i -> i.byteValue() == i)),
+                iadd(),
+                storeInstruction(kind, slot))) {
             builder.iinc(slot.get(), constant.get());
             return true;
         }

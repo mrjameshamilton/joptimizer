@@ -1,13 +1,12 @@
 package eu.jameshamilton.optimizer.type;
 
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.checkcast;
+
 import eu.jameshamilton.classfile.matcher.Capture;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.constantpool.ClassEntry;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.checkcast;
 
 public class CheckcastSimplifier implements Optimization {
     @Override

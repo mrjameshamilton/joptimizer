@@ -1,5 +1,6 @@
 [versions]
 junit                   = "5.13.4"
+annotations = "15.0"
 
 [libraries]
 junit_bom               = { module = "org.junit:junit-bom", version.ref = "junit" }
@@ -8,6 +9,7 @@ junit_vintage_engine    = { module = "org.junit.vintage:junit-vintage-engine" }
 junit_jupiter_engine    = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit_jupiter_api       = { module = "org.junit.jupiter:junit-jupiter-api" }
 junit_jupiter           = { module = "org.junit.jupiter:junit-jupiter" }
+annotations = { group = "org.jetbrains", name = "annotations", version.ref = "annotations" }
 
 [bundles]
 junit_runtime           = [ "junit_platform_launcher", "junit_vintage_engine", "junit_jupiter_engine" ]

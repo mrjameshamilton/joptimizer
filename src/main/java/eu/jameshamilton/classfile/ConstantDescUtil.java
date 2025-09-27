@@ -1,5 +1,7 @@
 package eu.jameshamilton.classfile;
 
+import static java.lang.constant.ClassDesc.of;
+
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDesc;
 import java.lang.constant.ConstantDescs;
@@ -7,8 +9,6 @@ import java.lang.constant.DynamicConstantDesc;
 import java.lang.constant.MethodHandleDesc;
 import java.lang.constant.MethodTypeDesc;
 import java.lang.invoke.TypeDescriptor;
-
-import static java.lang.constant.ClassDesc.of;
 
 public interface ConstantDescUtil {
     static String constantDescAsString(ConstantDesc v) {
@@ -21,7 +21,7 @@ public interface ConstantDescUtil {
             case Long aLong -> Long.toString(aLong);
             case null -> "null";
             case DynamicConstantDesc<?> _, MethodHandleDesc _, MethodTypeDesc _ ->
-                throw new UnsupportedOperationException("Unsupported constant type: " + v);
+                    throw new UnsupportedOperationException("Unsupported constant type: " + v);
         };
     }
 
@@ -34,7 +34,7 @@ public interface ConstantDescUtil {
             case Integer _ -> ConstantDescs.CD_int;
             case Long _ -> ConstantDescs.CD_long;
             case DynamicConstantDesc<?> _, MethodHandleDesc _, MethodTypeDesc _ ->
-                throw new UnsupportedOperationException("Unsupported constant type: " + v);
+                    throw new UnsupportedOperationException("Unsupported constant type: " + v);
         };
     }
 }

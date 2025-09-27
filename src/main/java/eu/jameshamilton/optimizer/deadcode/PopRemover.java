@@ -1,14 +1,13 @@
 package eu.jameshamilton.optimizer.deadcode;
 
-import eu.jameshamilton.classfile.matcher.Window;
-import eu.jameshamilton.optimizer.Optimization;
-
-import java.lang.classfile.CodeBuilder;
-
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.dup;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.pop;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.pop2;
+
+import eu.jameshamilton.classfile.matcher.Window;
+import eu.jameshamilton.optimizer.Optimization;
+import java.lang.classfile.CodeBuilder;
 
 public class PopRemover implements Optimization {
     @Override

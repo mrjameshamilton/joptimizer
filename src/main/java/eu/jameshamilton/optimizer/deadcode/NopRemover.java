@@ -1,11 +1,10 @@
 package eu.jameshamilton.optimizer.deadcode;
 
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.nop;
+
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.nop;
 
 public class NopRemover implements Optimization {
 

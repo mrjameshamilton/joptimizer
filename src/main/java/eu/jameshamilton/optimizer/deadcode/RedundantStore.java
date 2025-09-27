@@ -1,14 +1,13 @@
 package eu.jameshamilton.optimizer.deadcode;
 
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
+
 import eu.jameshamilton.classfile.matcher.Capture;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.TypeKind;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
 public class RedundantStore implements Optimization {
     @Override
@@ -16,9 +15,7 @@ public class RedundantStore implements Optimization {
         var typeKind = new Capture<TypeKind>();
         var capture = new Capture<Integer>();
         return window.matches(
-            loadInstruction(typeKind, capture),
-            storeInstruction(typeKind, capture)
-        );
+                loadInstruction(typeKind, capture), storeInstruction(typeKind, capture));
     }
 
     @Override

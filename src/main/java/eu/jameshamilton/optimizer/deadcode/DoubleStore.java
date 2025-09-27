@@ -1,13 +1,12 @@
 package eu.jameshamilton.optimizer.deadcode;
 
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
+
 import eu.jameshamilton.classfile.matcher.Capture;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.TypeKind;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.storeInstruction;
 
 public class DoubleStore implements Optimization {
     @Override
@@ -15,10 +14,7 @@ public class DoubleStore implements Optimization {
         Capture<Integer> slot = new Capture<>();
         Capture<TypeKind> kind = new Capture<>();
 
-        if (window.matches(
-            storeInstruction(kind, slot),
-            storeInstruction(kind, slot)
-        )) {
+        if (window.matches(storeInstruction(kind, slot), storeInstruction(kind, slot))) {
             if (kind.get().slotSize() == 2) {
                 builder.pop2();
             } else {

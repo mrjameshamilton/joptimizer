@@ -1,5 +1,10 @@
 package eu.jameshamilton.optimizer.string;
 
+import static eu.jameshamilton.classfile.matcher.Any.any;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
+import static java.lang.constant.ClassDesc.of;
+
 import eu.jameshamilton.classfile.ConstantDescUtil;
 import eu.jameshamilton.classfile.matcher.Capture;
 import eu.jameshamilton.classfile.matcher.Collector;
@@ -7,7 +12,6 @@ import eu.jameshamilton.classfile.matcher.ConstantTypeMatcher;
 import eu.jameshamilton.classfile.matcher.Matcher;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.constant.ClassDesc;
 import java.lang.constant.ConstantDesc;
@@ -15,18 +19,21 @@ import java.lang.constant.MethodTypeDesc;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import static eu.jameshamilton.classfile.matcher.Any.any;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.invokevirtual;
-import static java.lang.constant.ClassDesc.of;
-
 public class StringBuilderAppendCombiner implements Optimization {
-    private static final Matcher<ClassDesc> stringBufferClass = e -> e.equals(of("java.lang.StringBuffer"));
-    private static final Matcher<ClassDesc> stringBuilderClass = e -> e.equals(of("java.lang.StringBuilder"));
+    private static final Matcher<ClassDesc> stringBufferClass =
+            e -> e.equals(of("java.lang.StringBuffer"));
+    private static final Matcher<ClassDesc> stringBuilderClass =
+            e -> e.equals(of("java.lang.StringBuilder"));
     private static final Matcher<String> appendName = e -> e.equals("append");
 
     private static final ConstantTypeMatcher<ConstantDesc> supportedConstantTypeMatcher =
-        new ConstantTypeMatcher<>(Long.class, Double.class, Float.class, Integer.class, String.class, ClassDesc.class);
+            new ConstantTypeMatcher<>(
+                    Long.class,
+                    Double.class,
+                    Float.class,
+                    Integer.class,
+                    String.class,
+                    ClassDesc.class);
 
     @Override
     public boolean apply(CodeBuilder codeBuilder, Window window) {
@@ -34,29 +41,30 @@ public class StringBuilderAppendCombiner implements Optimization {
         var classDescCapture = new Capture<ClassDesc>();
         var stringBuilder = classDescCapture.and(stringBuilderClass.or(stringBufferClass));
         var constantCollector =
-            loadConstant(supportedConstantTypeMatcher.and(new Collector<>(constants)));
+                loadConstant(supportedConstantTypeMatcher.and(new Collector<>(constants)));
 
         if (window.matches(
-            constantCollector,
-            invokevirtual(stringBuilder, appendName, any()),
-            constantCollector,
-            invokevirtual(stringBuilder, appendName, any())
-        )) {
-            String s = constants.stream()
-                .map(ConstantDescUtil::constantDescAsString)
-                .collect(Collectors.joining());
+                constantCollector,
+                invokevirtual(stringBuilder, appendName, any()),
+                constantCollector,
+                invokevirtual(stringBuilder, appendName, any()))) {
+            String s =
+                    constants.stream()
+                            .map(ConstantDescUtil::constantDescAsString)
+                            .collect(Collectors.joining());
 
             if (s.length() > 65_535) {
                 return false;
             }
 
             codeBuilder
-                .loadConstant(s)
-                .invokevirtual(
-                    classDescCapture.get(),
-                    "append",
-                    MethodTypeDesc.ofDescriptor("(Ljava/lang/String;)" + classDescCapture.get().descriptorString())
-                );
+                    .loadConstant(s)
+                    .invokevirtual(
+                            classDescCapture.get(),
+                            "append",
+                            MethodTypeDesc.ofDescriptor(
+                                    "(Ljava/lang/String;)"
+                                            + classDescCapture.get().descriptorString()));
 
             return true;
         }

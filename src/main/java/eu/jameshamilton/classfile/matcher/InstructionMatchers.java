@@ -1,24 +1,5 @@
 package eu.jameshamilton.classfile.matcher;
 
-import java.lang.classfile.CodeElement;
-import java.lang.classfile.Instruction;
-import java.lang.classfile.Label;
-import java.lang.classfile.Opcode;
-import java.lang.classfile.TypeKind;
-import java.lang.classfile.constantpool.ClassEntry;
-import java.lang.classfile.instruction.BranchInstruction;
-import java.lang.classfile.instruction.ConstantInstruction;
-import java.lang.classfile.instruction.FieldInstruction;
-import java.lang.classfile.instruction.IncrementInstruction;
-import java.lang.classfile.instruction.InvokeInstruction;
-import java.lang.classfile.instruction.LoadInstruction;
-import java.lang.classfile.instruction.NewObjectInstruction;
-import java.lang.classfile.instruction.StoreInstruction;
-import java.lang.classfile.instruction.TypeCheckInstruction;
-import java.lang.constant.ClassDesc;
-import java.lang.constant.ConstantDesc;
-import java.lang.constant.MethodTypeDesc;
-
 import static java.lang.classfile.Opcode.CHECKCAST;
 import static java.lang.classfile.Opcode.D2I;
 import static java.lang.classfile.Opcode.DMUL;
@@ -45,6 +26,25 @@ import static java.lang.classfile.Opcode.LNEG;
 import static java.lang.classfile.Opcode.LSUB;
 import static java.lang.classfile.Opcode.PUTSTATIC;
 
+import java.lang.classfile.CodeElement;
+import java.lang.classfile.Instruction;
+import java.lang.classfile.Label;
+import java.lang.classfile.Opcode;
+import java.lang.classfile.TypeKind;
+import java.lang.classfile.constantpool.ClassEntry;
+import java.lang.classfile.instruction.BranchInstruction;
+import java.lang.classfile.instruction.ConstantInstruction;
+import java.lang.classfile.instruction.FieldInstruction;
+import java.lang.classfile.instruction.IncrementInstruction;
+import java.lang.classfile.instruction.InvokeInstruction;
+import java.lang.classfile.instruction.LoadInstruction;
+import java.lang.classfile.instruction.NewObjectInstruction;
+import java.lang.classfile.instruction.StoreInstruction;
+import java.lang.classfile.instruction.TypeCheckInstruction;
+import java.lang.constant.ClassDesc;
+import java.lang.constant.ConstantDesc;
+import java.lang.constant.MethodTypeDesc;
+
 public class InstructionMatchers {
     public static <T> Matcher<T> instruction(Opcode opcode) {
         return e -> e instanceof Instruction i && i.opcode() == opcode;
@@ -55,8 +55,10 @@ public class InstructionMatchers {
     }
 
     public static <T> Matcher<T> iinc(Matcher<Integer> slot, Matcher<Integer> amount) {
-        return e -> e instanceof IncrementInstruction i &&
-            slot.matches(i.slot()) && amount.matches(i.constant());
+        return e ->
+                e instanceof IncrementInstruction i
+                        && slot.matches(i.slot())
+                        && amount.matches(i.constant());
     }
 
     // Loading Constants
@@ -65,85 +67,97 @@ public class InstructionMatchers {
     }
 
     public static <T> Matcher<T> iconst(int value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Integer i && i == value;
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Integer i
+                        && i == value;
     }
 
     public static <T> Matcher<T> lconst(long value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Long l && l == value;
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Long l
+                        && l == value;
     }
 
     public static <T> Matcher<T> fconst(float value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Float f && f == value;
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Float f
+                        && f == value;
     }
 
     public static <T> Matcher<T> dconst(double value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Double d && d == value;
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Double d
+                        && d == value;
     }
 
     // Loading Local Variables
     public static <T> Matcher<T> iload(int slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.ILOAD && l.slot() == slot;
+        return e ->
+                e instanceof LoadInstruction l && l.opcode() == Opcode.ILOAD && l.slot() == slot;
     }
 
     public static <T> Matcher<T> iload(Matcher<Integer> slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.ILOAD && slot.matches(l.slot());
+        return e ->
+                e instanceof LoadInstruction l
+                        && l.opcode() == Opcode.ILOAD
+                        && slot.matches(l.slot());
     }
 
     public static <T> Matcher<T> lload(int slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.LLOAD && l.slot() == slot;
+        return e ->
+                e instanceof LoadInstruction l && l.opcode() == Opcode.LLOAD && l.slot() == slot;
     }
 
     public static <T> Matcher<T> fload(int slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.FLOAD && l.slot() == slot;
+        return e ->
+                e instanceof LoadInstruction l && l.opcode() == Opcode.FLOAD && l.slot() == slot;
     }
 
     public static <T> Matcher<T> dload(int slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.DLOAD && l.slot() == slot;
+        return e ->
+                e instanceof LoadInstruction l && l.opcode() == Opcode.DLOAD && l.slot() == slot;
     }
 
     public static <T> Matcher<T> aload(Matcher<Integer> slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.ALOAD && slot.matches(l.slot());
+        return e ->
+                e instanceof LoadInstruction l
+                        && l.opcode() == Opcode.ALOAD
+                        && slot.matches(l.slot());
     }
 
     public static <T> Matcher<T> aload(int slot) {
-        return e -> e instanceof LoadInstruction l &&
-            l.opcode() == Opcode.ALOAD && l.slot() == slot;
+        return e ->
+                e instanceof LoadInstruction l && l.opcode() == Opcode.ALOAD && l.slot() == slot;
     }
 
     // Storing Local Variables
     public static <T> Matcher<T> istore(int slot) {
-        return e -> e instanceof StoreInstruction s &&
-            s.opcode() == Opcode.ISTORE && s.slot() == slot;
+        return e ->
+                e instanceof StoreInstruction s && s.opcode() == Opcode.ISTORE && s.slot() == slot;
     }
 
     public static <T> Matcher<T> lstore(int slot) {
-        return e -> e instanceof StoreInstruction s &&
-            s.opcode() == Opcode.LSTORE && s.slot() == slot;
+        return e ->
+                e instanceof StoreInstruction s && s.opcode() == Opcode.LSTORE && s.slot() == slot;
     }
 
     public static <T> Matcher<T> fstore(int slot) {
-        return e -> e instanceof StoreInstruction s &&
-            s.opcode() == Opcode.FSTORE && s.slot() == slot;
+        return e ->
+                e instanceof StoreInstruction s && s.opcode() == Opcode.FSTORE && s.slot() == slot;
     }
 
     public static <T> Matcher<T> dstore(int slot) {
-        return e -> e instanceof StoreInstruction s &&
-            s.opcode() == Opcode.DSTORE && s.slot() == slot;
+        return e ->
+                e instanceof StoreInstruction s && s.opcode() == Opcode.DSTORE && s.slot() == slot;
     }
 
     public static <T> Matcher<T> astore(int slot) {
-        return e -> e instanceof StoreInstruction s &&
-            s.opcode() == Opcode.ASTORE && s.slot() == slot;
+        return e ->
+                e instanceof StoreInstruction s && s.opcode() == Opcode.ASTORE && s.slot() == slot;
     }
 
     // Array Operations
@@ -315,9 +329,10 @@ public class InstructionMatchers {
     }
 
     public static <T> Matcher<T> checkcast(Matcher<ClassEntry> classDesc) {
-        return e -> e instanceof TypeCheckInstruction i &&
-            i.opcode() == CHECKCAST
-            && classDesc.matches(i.type());
+        return e ->
+                e instanceof TypeCheckInstruction i
+                        && i.opcode() == CHECKCAST
+                        && classDesc.matches(i.type());
     }
 
     public static <T> Matcher<T> nop() {
@@ -329,206 +344,243 @@ public class InstructionMatchers {
     }
 
     public static <T> Matcher<T> getstatic(ClassDesc owner, String name, ClassDesc type) {
-        return e -> e instanceof FieldInstruction f &&
-            f.opcode() == GETSTATIC &&
-            f.field().owner().asSymbol().equals(owner) &&
-            f.field().name().stringValue().equals(name) &&
-            f.field().typeSymbol().equals(type);
+        return e ->
+                e instanceof FieldInstruction f
+                        && f.opcode() == GETSTATIC
+                        && f.field().owner().asSymbol().equals(owner)
+                        && f.field().name().stringValue().equals(name)
+                        && f.field().typeSymbol().equals(type);
     }
 
-    public static <T> Matcher<T> getstatic(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
-        return e -> e instanceof FieldInstruction f &&
-            f.opcode() == GETSTATIC &&
-            owner.matches(f.field().owner().asSymbol()) &&
-            name.matches(f.field().name().stringValue()) &&
-            type.matches(f.field().typeSymbol());
+    public static <T> Matcher<T> getstatic(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
+        return e ->
+                e instanceof FieldInstruction f
+                        && f.opcode() == GETSTATIC
+                        && owner.matches(f.field().owner().asSymbol())
+                        && name.matches(f.field().name().stringValue())
+                        && type.matches(f.field().typeSymbol());
     }
 
-    public static <T> Matcher<T> putstatic(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
-        return e -> e instanceof FieldInstruction f &&
-            f.opcode() == PUTSTATIC &&
-            owner.matches(f.field().owner().asSymbol()) &&
-            name.matches(f.field().name().stringValue()) &&
-            type.matches(f.field().typeSymbol());
+    public static <T> Matcher<T> putstatic(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
+        return e ->
+                e instanceof FieldInstruction f
+                        && f.opcode() == PUTSTATIC
+                        && owner.matches(f.field().owner().asSymbol())
+                        && name.matches(f.field().name().stringValue())
+                        && type.matches(f.field().typeSymbol());
     }
 
-    public static <T> Matcher<T> getfield(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
-        return e -> e instanceof FieldInstruction f &&
-            f.opcode() == Opcode.GETFIELD &&
-            owner.matches(f.field().owner().asSymbol()) &&
-            name.matches(f.field().name().stringValue()) &&
-            type.matches(f.field().typeSymbol());
+    public static <T> Matcher<T> getfield(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
+        return e ->
+                e instanceof FieldInstruction f
+                        && f.opcode() == Opcode.GETFIELD
+                        && owner.matches(f.field().owner().asSymbol())
+                        && name.matches(f.field().name().stringValue())
+                        && type.matches(f.field().typeSymbol());
     }
 
-    public static <T> Matcher<T> putfield(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
-        return e -> e instanceof FieldInstruction f &&
-            f.opcode() == Opcode.PUTFIELD &&
-            owner.matches(f.field().owner().asSymbol()) &&
-            name.matches(f.field().name().stringValue()) &&
-            type.matches(f.field().typeSymbol());
-
+    public static <T> Matcher<T> putfield(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<ClassDesc> type) {
+        return e ->
+                e instanceof FieldInstruction f
+                        && f.opcode() == Opcode.PUTFIELD
+                        && owner.matches(f.field().owner().asSymbol())
+                        && name.matches(f.field().name().stringValue())
+                        && type.matches(f.field().typeSymbol());
     }
 
     public static <T> Matcher<T> invokevirtual(String owner, String name, String desc) {
         return invokevirtual(ClassDesc.of(owner), name, MethodTypeDesc.ofDescriptor(desc));
     }
 
-    public static <T> Matcher<T> invokevirtual(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
-        return e -> e instanceof InvokeInstruction i &&
-            i.opcode() == Opcode.INVOKEVIRTUAL &&
-            owner.matches(i.method().owner().asSymbol()) &&
-            name.matches(i.method().name().stringValue()) &&
-            type.matches(i.typeSymbol());
+    public static <T> Matcher<T> invokevirtual(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
+        return e ->
+                e instanceof InvokeInstruction i
+                        && i.opcode() == Opcode.INVOKEVIRTUAL
+                        && owner.matches(i.method().owner().asSymbol())
+                        && name.matches(i.method().name().stringValue())
+                        && type.matches(i.typeSymbol());
     }
 
     public static <T> Matcher<T> invokevirtual(ClassDesc owner, String name, MethodTypeDesc type) {
-        return e -> e instanceof InvokeInstruction i &&
-            i.opcode() == Opcode.INVOKEVIRTUAL &&
-            i.method().owner().asSymbol().equals(owner) &&
-            i.method().name().stringValue().equals(name) &&
-            i.typeSymbol().equals(type);
+        return e ->
+                e instanceof InvokeInstruction i
+                        && i.opcode() == Opcode.INVOKEVIRTUAL
+                        && i.method().owner().asSymbol().equals(owner)
+                        && i.method().name().stringValue().equals(name)
+                        && i.typeSymbol().equals(type);
     }
 
-    public static <T> Matcher<T> invokespecial(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
-        return e -> e instanceof InvokeInstruction i &&
-            i.opcode() == Opcode.INVOKESPECIAL &&
-            owner.matches(i.method().owner().asSymbol()) &&
-            name.matches(i.method().name().stringValue()) &&
-            type.matches(i.typeSymbol());
+    public static <T> Matcher<T> invokespecial(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
+        return e ->
+                e instanceof InvokeInstruction i
+                        && i.opcode() == Opcode.INVOKESPECIAL
+                        && owner.matches(i.method().owner().asSymbol())
+                        && name.matches(i.method().name().stringValue())
+                        && type.matches(i.typeSymbol());
     }
 
-    public static <T> Matcher<T> invokestatic(Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
-        return e -> e instanceof InvokeInstruction i &&
-            i.opcode() == Opcode.INVOKESTATIC &&
-            owner.matches(i.method().owner().asSymbol()) &&
-            name.matches(i.method().name().stringValue()) &&
-            type.matches(i.typeSymbol());
-
+    public static <T> Matcher<T> invokestatic(
+            Matcher<ClassDesc> owner, Matcher<String> name, Matcher<MethodTypeDesc> type) {
+        return e ->
+                e instanceof InvokeInstruction i
+                        && i.opcode() == Opcode.INVOKESTATIC
+                        && owner.matches(i.method().owner().asSymbol())
+                        && name.matches(i.method().name().stringValue())
+                        && type.matches(i.typeSymbol());
     }
 
     public static <T> Matcher<T> goto_(Matcher<Label> label) {
-        return e -> e instanceof BranchInstruction b
-            && (b.opcode() == GOTO || b.opcode() == GOTO_W) &&
-            label.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && (b.opcode() == GOTO || b.opcode() == GOTO_W)
+                        && label.matches(b.target());
     }
 
     public static <T> Matcher<T> ifeq(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b &&
-            b.opcode() == IFEQ &&
-            labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IFEQ
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> ifne(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b &&
-            b.opcode() == IFNE &&
-            labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IFNE
+                        && labelMatcher.matches(b.target());
     }
 
     public static Matcher<CodeElement> label(Matcher<Label> label) {
-        return e -> e instanceof Label l &&
-            label.matches(l);
+        return e -> e instanceof Label l && label.matches(l);
     }
 
     public static <T> Matcher<T> ifle(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b &&
-            b.opcode() == IFLE &&
-            labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IFLE
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> ifge(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b &&
-            b.opcode() == IFGE &&
-            labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IFGE
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmpeq(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPEQ &&
-            labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPEQ
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmpne(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPNE
-            && labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPNE
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmplt(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPLT
-            && labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPLT
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmpge(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPGE
-            && labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPGE
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmpgt(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPGT
-            && labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPGT
+                        && labelMatcher.matches(b.target());
     }
 
     public static <T> Matcher<T> if_icmple(Matcher<Label> labelMatcher) {
-        return e -> e instanceof BranchInstruction b
-            && b.opcode() == IF_ICMPLE
-            && labelMatcher.matches(b.target());
+        return e ->
+                e instanceof BranchInstruction b
+                        && b.opcode() == IF_ICMPLE
+                        && labelMatcher.matches(b.target());
     }
-
-
-
 
     // Utility matchers with captures
-    public static Matcher<CodeElement> loadInstruction(Matcher<TypeKind> type, Matcher<Integer> slot) {
-        return e -> e instanceof LoadInstruction l &&
-            type.matches(l.typeKind()) &&
-            slot.matches(l.slot());
+    public static Matcher<CodeElement> loadInstruction(
+            Matcher<TypeKind> type, Matcher<Integer> slot) {
+        return e ->
+                e instanceof LoadInstruction l
+                        && type.matches(l.typeKind())
+                        && slot.matches(l.slot());
     }
 
-    public static Matcher<CodeElement> storeInstruction(Matcher<TypeKind> type, Matcher<Integer> slot) {
-        return e -> e instanceof StoreInstruction s &&
-            type.matches(s.typeKind()) &&
-            slot.matches(s.slot());
+    public static Matcher<CodeElement> storeInstruction(
+            Matcher<TypeKind> type, Matcher<Integer> slot) {
+        return e ->
+                e instanceof StoreInstruction s
+                        && type.matches(s.typeKind())
+                        && slot.matches(s.slot());
     }
 
-    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(Class<?> expectedType, Matcher<T> value) {
-        return e -> e instanceof ConstantInstruction c &&
-           expectedType.isInstance(c.constantValue()) &&
-           value.matches((T) expectedType.cast(c.constantValue()));
+    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(
+            Class<?> expectedType, Matcher<T> value) {
+        return e ->
+                e instanceof ConstantInstruction c
+                        && expectedType.isInstance(c.constantValue())
+                        && value.matches((T) expectedType.cast(c.constantValue()));
     }
 
     public static <Y extends CodeElement> Matcher<Y> loadConstantString(Matcher<String> value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof String s && value.matches(s);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof String s
+                        && value.matches(s);
     }
 
     public static <Y extends CodeElement> Matcher<Y> loadConstantInteger(Matcher<Integer> value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Integer s && value.matches(s);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Integer s
+                        && value.matches(s);
     }
 
     public static <Y extends CodeElement> Matcher<Y> loadConstantLong(Matcher<Long> value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Long s && value.matches(s);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Long s
+                        && value.matches(s);
     }
 
     public static <Y extends CodeElement> Matcher<Y> loadConstantFloat(Matcher<Float> value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Float s && value.matches(s);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Float s
+                        && value.matches(s);
     }
 
     public static <Y extends CodeElement> Matcher<Y> loadConstantDouble(Matcher<Double> value) {
-        return e -> e instanceof ConstantInstruction c &&
-            c.constantValue() instanceof Double s && value.matches(s);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.constantValue() instanceof Double s
+                        && value.matches(s);
     }
 
-    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(Matcher<T> value) {
+    public static <T extends ConstantDesc, Y extends CodeElement> Matcher<Y> loadConstant(
+            Matcher<T> value) {
         return e -> {
             try {
-                return e instanceof ConstantInstruction c &&
-                    value.matches((T) c.constantValue());
+                return e instanceof ConstantInstruction c && value.matches((T) c.constantValue());
             } catch (ClassCastException _) {
                 return false;
             }
@@ -540,22 +592,35 @@ public class InstructionMatchers {
     }
 
     public static <T> Matcher<T> newObjectInstruction(Matcher<ClassDesc> classDesc) {
-        return e -> e instanceof NewObjectInstruction n && classDesc.matches(n.className().asSymbol());
+        return e ->
+                e instanceof NewObjectInstruction n && classDesc.matches(n.className().asSymbol());
     }
 
     public static <T> Matcher<T> bipush(int value) {
-        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.BIPUSH && ((Integer)c.constantValue()).equals(value);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.opcode() == Opcode.BIPUSH
+                        && ((Integer) c.constantValue()).equals(value);
     }
 
     public static <T> Matcher<T> sipush(int value) {
-        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.SIPUSH && ((Integer)c.constantValue()).equals(value);
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.opcode() == Opcode.SIPUSH
+                        && ((Integer) c.constantValue()).equals(value);
     }
 
     public static <T extends Integer, Y extends CodeElement> Matcher<Y> bipush(Matcher<T> value) {
-        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.BIPUSH && value.matches((T)c.constantValue());
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.opcode() == Opcode.BIPUSH
+                        && value.matches((T) c.constantValue());
     }
 
-    public static <T extends Integer, Y extends CodeElement> Matcher<Y>  sipush(Matcher<T> value) {
-        return e -> e instanceof ConstantInstruction c && c.opcode() == Opcode.SIPUSH && value.matches((T)c.constantValue());
+    public static <T extends Integer, Y extends CodeElement> Matcher<Y> sipush(Matcher<T> value) {
+        return e ->
+                e instanceof ConstantInstruction c
+                        && c.opcode() == Opcode.SIPUSH
+                        && value.matches((T) c.constantValue());
     }
 }

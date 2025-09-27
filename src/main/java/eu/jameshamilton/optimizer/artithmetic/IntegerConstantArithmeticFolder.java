@@ -1,16 +1,8 @@
 package eu.jameshamilton.optimizer.artithmetic;
 
-import eu.jameshamilton.classfile.matcher.Capture;
-import eu.jameshamilton.classfile.matcher.CollectionMatcher;
-import eu.jameshamilton.classfile.matcher.Window;
-import eu.jameshamilton.optimizer.Optimization;
-
-import java.lang.classfile.CodeBuilder;
-import java.lang.classfile.Opcode;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.ineg;
 import static eu.jameshamilton.classfile.matcher.InstructionMatchers.instruction;
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadConstant;
 import static java.lang.classfile.Opcode.IADD;
 import static java.lang.classfile.Opcode.IAND;
 import static java.lang.classfile.Opcode.IDIV;
@@ -23,10 +15,17 @@ import static java.lang.classfile.Opcode.ISUB;
 import static java.lang.classfile.Opcode.IUSHR;
 import static java.lang.classfile.Opcode.IXOR;
 
+import eu.jameshamilton.classfile.matcher.Capture;
+import eu.jameshamilton.classfile.matcher.CollectionMatcher;
+import eu.jameshamilton.classfile.matcher.Window;
+import eu.jameshamilton.optimizer.Optimization;
+import java.lang.classfile.CodeBuilder;
+import java.lang.classfile.Opcode;
+
 public class IntegerConstantArithmeticFolder implements Optimization {
-    private static final CollectionMatcher<Opcode> integerArithmetic = new CollectionMatcher<>(
-        IADD, ISUB, IMUL, IDIV, IREM, IAND, IOR, IXOR, ISHL, ISHR, IUSHR
-    );
+    private static final CollectionMatcher<Opcode> integerArithmetic =
+            new CollectionMatcher<>(
+                    IADD, ISUB, IMUL, IDIV, IREM, IAND, IOR, IXOR, ISHL, ISHR, IUSHR);
 
     @Override
     public boolean apply(CodeBuilder builder, Window window) {
@@ -35,35 +34,30 @@ public class IntegerConstantArithmeticFolder implements Optimization {
         var op = new Capture<Opcode>();
 
         if (window.matches(
-            loadConstant(c1),
-            loadConstant(c2),
-            instruction(integerArithmetic.and(op))
-        )) {
+                loadConstant(c1), loadConstant(c2), instruction(integerArithmetic.and(op)))) {
             var i1 = c1.get();
             var i2 = c2.get();
-            var value = switch (op.get()) {
-                case IADD -> i1 + i2;
-                case ISUB -> i1 - i2;
-                case IMUL -> i1 * i2;
-                case IDIV -> i2 != 0 ? i1 / i2 : null;
-                case IREM -> i2 != 0 ? i1 % i2 : null;
-                case IAND -> i1 & i2;
-                case IOR -> i1 | i2;
-                case IXOR -> i1 ^ i2;
-                case ISHL -> i1 << (i2 & 0x1F);
-                case ISHR -> i1 >> (i2 & 0x1F);
-                case IUSHR -> i1 >>> (i2 & 0x1F);
-                default -> null;
-            };
+            var value =
+                    switch (op.get()) {
+                        case IADD -> i1 + i2;
+                        case ISUB -> i1 - i2;
+                        case IMUL -> i1 * i2;
+                        case IDIV -> i2 != 0 ? i1 / i2 : null;
+                        case IREM -> i2 != 0 ? i1 % i2 : null;
+                        case IAND -> i1 & i2;
+                        case IOR -> i1 | i2;
+                        case IXOR -> i1 ^ i2;
+                        case ISHL -> i1 << (i2 & 0x1F);
+                        case ISHR -> i1 >> (i2 & 0x1F);
+                        case IUSHR -> i1 >>> (i2 & 0x1F);
+                        default -> null;
+                    };
 
             if (value != null) {
                 builder.loadConstant(value);
                 return true;
             }
-        } else if (window.matches(
-            loadConstant(c1.clear()),
-            ineg())
-        ) {
+        } else if (window.matches(loadConstant(c1.clear()), ineg())) {
             builder.loadConstant(-c1.get());
             return true;
         }

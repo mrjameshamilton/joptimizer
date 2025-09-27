@@ -10,7 +10,7 @@ public class ConstantTypeMatcher<T extends ConstantDesc> implements Matcher<T> {
 
     private final Set<Class<?>> types;
 
-    public ConstantTypeMatcher(Class<?>...types) {
+    public ConstantTypeMatcher(Class<?>... types) {
         this.types = Set.of(types);
     }
 

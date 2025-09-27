@@ -1,13 +1,12 @@
 package eu.jameshamilton.optimizer.deadcode;
 
+import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
+
 import eu.jameshamilton.classfile.matcher.Capture;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.Optimization;
-
 import java.lang.classfile.CodeBuilder;
 import java.lang.classfile.TypeKind;
-
-import static eu.jameshamilton.classfile.matcher.InstructionMatchers.loadInstruction;
 
 public class RedundantLoad implements Optimization {
     @Override
@@ -15,10 +14,9 @@ public class RedundantLoad implements Optimization {
         // load, load -> load, dup
         var typeKind = new Capture<TypeKind>();
         var capture = new Capture<Integer>();
-        boolean matches = window.matches(
-            loadInstruction(typeKind, capture),
-            loadInstruction(typeKind, capture)
-        );
+        boolean matches =
+                window.matches(
+                        loadInstruction(typeKind, capture), loadInstruction(typeKind, capture));
         if (matches) {
             builder.with(window.get(0));
             if (typeKind.get().slotSize() == 1) {

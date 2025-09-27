@@ -84,7 +84,6 @@ public class Window {
         return true;
     }
 
-
     public void reset() {
         matchedCount = 0;
     }

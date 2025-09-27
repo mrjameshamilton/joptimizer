@@ -3,10 +3,10 @@ package eu.jameshamilton.optimizer;
 import eu.jameshamilton.classfile.matcher.Window;
 import eu.jameshamilton.optimizer.artithmetic.AddZeroFolder;
 import eu.jameshamilton.optimizer.artithmetic.ConstantConversionFolder;
-import eu.jameshamilton.optimizer.artithmetic.IntegerPushSimplifier;
 import eu.jameshamilton.optimizer.artithmetic.DoubleConstantArithmeticFolder;
 import eu.jameshamilton.optimizer.artithmetic.IncrementFolder;
 import eu.jameshamilton.optimizer.artithmetic.IntegerConstantArithmeticFolder;
+import eu.jameshamilton.optimizer.artithmetic.IntegerPushSimplifier;
 import eu.jameshamilton.optimizer.artithmetic.MultiplyByOne;
 import eu.jameshamilton.optimizer.deadcode.ConditionalJumpNextRemover;
 import eu.jameshamilton.optimizer.deadcode.DoubleIncrementCombiner;
@@ -33,45 +33,45 @@ import eu.jameshamilton.optimizer.string.StringBuilderConstructorAppend;
 import eu.jameshamilton.optimizer.string.StringBuilderOptimizer;
 import eu.jameshamilton.optimizer.type.CheckcastSimplifier;
 import eu.jameshamilton.optimizer.type.TypeConversionSimplifier;
-
 import java.lang.classfile.CodeBuilder;
 
 public interface Optimization {
 
-    Optimization[] optimizations = new Optimization[]{
-        new AddSubConstant(),
-        new SwapConstant(),
-        new NopRemover(),
-        new ConstantConversionFolder(),
-        new IntegerConstantArithmeticFolder(),
-        new PopRemover(),
-        new RedundantStore(),
-        new RedundantLoad(),
-        new IncrementFolder(),
-        new DoubleStore(),
-        new BooleanFieldInliner(),
-        new GotoNextRemover(),
-        new ConditionalJumpNextRemover(),
-        new AddZeroFolder(),
-        new MultiplyByOne(),
-        new DoubleConstantArithmeticFolder(),
-        new DoubleNegation(),
-        new RedundantFieldStore(),
-        new RedundantStaticFieldStore(),
-        new TypeConversionSimplifier(),
-        new CheckcastSimplifier(),
-        new StringBuilderOptimizer(),
-        new StringBuilderAppendCombiner(),
-        new ConstantToStringOptimization(),
-        new StringBuilderConstructorAppend(),
-        new ConstantStringLength(),
-        new ConstantStringSubstring(),
-        new ConstantStringEquals(),
-        new DoubleIncrementCombiner(),
-        new IntegerPushSimplifier(),
-        new ZeroComparisonOptimizer(),
-        new ClassConstantOptimizer()
-    };
+    Optimization[] optimizations =
+            new Optimization[] {
+                new AddSubConstant(),
+                new SwapConstant(),
+                new NopRemover(),
+                new ConstantConversionFolder(),
+                new IntegerConstantArithmeticFolder(),
+                new PopRemover(),
+                new RedundantStore(),
+                new RedundantLoad(),
+                new IncrementFolder(),
+                new DoubleStore(),
+                new BooleanFieldInliner(),
+                new GotoNextRemover(),
+                new ConditionalJumpNextRemover(),
+                new AddZeroFolder(),
+                new MultiplyByOne(),
+                new DoubleConstantArithmeticFolder(),
+                new DoubleNegation(),
+                new RedundantFieldStore(),
+                new RedundantStaticFieldStore(),
+                new TypeConversionSimplifier(),
+                new CheckcastSimplifier(),
+                new StringBuilderOptimizer(),
+                new StringBuilderAppendCombiner(),
+                new ConstantToStringOptimization(),
+                new StringBuilderConstructorAppend(),
+                new ConstantStringLength(),
+                new ConstantStringSubstring(),
+                new ConstantStringEquals(),
+                new DoubleIncrementCombiner(),
+                new IntegerPushSimplifier(),
+                new ZeroComparisonOptimizer(),
+                new ClassConstantOptimizer()
+            };
 
     static Optimization withStats(OptimizationStats stats, Optimization optimization) {
         return new Optimization() {

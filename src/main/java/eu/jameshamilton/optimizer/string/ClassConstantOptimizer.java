@@ -22,7 +22,7 @@ public class ClassConstantOptimizer implements Optimization {
                         ClassDesc.of("java.lang.Class"),
                         "getName",
                         MethodTypeDesc.ofDescriptor("()Ljava/lang/String;")))) {
-            builder.loadConstant(clazz.get().displayName());
+            builder.loadConstant(clazz.get().packageName() + "." + clazz.get().displayName());
             return true;
         }
 
